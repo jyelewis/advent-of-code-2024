@@ -9,8 +9,10 @@
   },
   "scripts": {
     "test": "tsx --test **/*.test.ts",
+    "tsc": "tsc --noEmit",
     "lint:check": "prettier --check .",
-    "lint:fix": "prettier --write ."
+    "lint:fix": "prettier --write .",
+    "check": "yarn tsc && yarn lint:check && yarn test"
   },
   "dependencies": {
     "@types/node": "^22.10.1",
