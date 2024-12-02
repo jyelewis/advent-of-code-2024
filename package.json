@@ -4,6 +4,9 @@
   "repository": "git@github.com:jyelewis/advent-of-code-2024.git",
   "author": "Jye Lewis <jye@jyelewis.com>",
   "license": "MIT",
+  "engines": {
+    "node": ">=22.11.0"
+  },
   "scripts": {
     "test": "tsx --test **/*.test.ts",
     "lint:check": "prettier --check .",
@@ -12,6 +15,7 @@
   "dependencies": {
     "@types/node": "^22.10.1",
     "prettier": "^3.4.1",
+    "scanf": "^1.2.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }

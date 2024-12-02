@@ -1,3 +1,4 @@
+import { sscanf } from "scanf";
 import "../utilities/sum";
 
 function parseInput(input: string): [number[], number[]] {
@@ -5,21 +6,18 @@ function parseInput(input: string): [number[], number[]] {
   let list2: number[] = [];
 
   for (const line of input.split("\n")) {
-    const [value1, value2] = line.split("   ");
+    const [value1, value2] = sscanf(line, "%d   %d");
 
-    list1.push(parseInt(value1, 10));
-    list2.push(parseInt(value2, 10));
+    list1.push(value1);
+    list2.push(value2);
   }
 
-  return [list1, list2];
+  // ensure our lists are sorted so numbers are compared in the correct order
+  return [list1.toSorted(), list2.toSorted()];
 }
 
 export function day01a(input: string) {
   const [list1, list2] = parseInput(input);
-
-  // ensure our lists are sorted so numbers are compared in the correct order
-  list1.sort();
-  list2.sort();
 
   return (
     list1
