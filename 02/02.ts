@@ -1,8 +1,28 @@
-// array of reports, each report is an array of level numbers
+import { range } from "../utilities/range";
+
+export function day02a(input: string) {
+  // count safe reports
+  return parseInput(input).filter(reportIsSafe).length;
+}
+
+export function day02b(input: string) {
+  // count safe reports, including those that become safe by removing a single element
+  return parseInput(input).filter(
+    (report) =>
+      // the report is already safe
+      reportIsSafe(report) ||
+      // or removing a single element makes it safe
+      range(report.length).some((i) => reportIsSafe(report.toSpliced(i, 1))),
+  ).length;
+}
+
 function parseInput(input: string): Array<number[]> {
-  return input.split("\n").map((levelStr) => {
-    return levelStr.split(" ").map((numStr) => parseInt(numStr, 10));
-  });
+  // return 2d array of reports -> levels
+  return input
+    .split("\n")
+    .map((levelStr) =>
+      levelStr.split(" ").map((numStr) => parseInt(numStr, 10)),
+    );
 }
 
 function reportIsSafe(report: number[]): boolean {
@@ -15,43 +35,11 @@ function reportIsSafe(report: number[]): boolean {
   );
 
   const differencesAllWithinRange = report.every((num, i) => {
-    if (i === 0) {
-      return true;
-    }
+    if (i === 0) return true;
 
     const difference = Math.abs(num - report[i - 1]);
     return 1 <= difference && difference <= 3;
   });
 
   return (allIncreasing || allDecreasing) && differencesAllWithinRange;
-}
-
-export function day02a(input: string) {
-  return parseInput(input).filter(reportIsSafe).length;
-}
-
-export function day02b(input: string) {
-  const reports = parseInput(input);
-
-  const safeLevels = reports.filter((report) => {
-    if (reportIsSafe(report)) {
-      return true;
-    }
-
-    for (let i = 0; i < report.length; i++) {
-      // check each report with one level removed
-      const copy = [...report];
-      copy.splice(i, 1);
-
-      // if any are safe, return true
-      if (reportIsSafe(copy)) {
-        return true;
-      }
-    }
-
-    // none of our modifications were safe :(
-    return false;
-  });
-
-  return safeLevels.length;
 }
