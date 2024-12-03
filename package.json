@@ -8,6 +8,7 @@
     "node": ">=22.11.0"
   },
   "scripts": {
+    "generate-day": "tsx template/generate-day.ts",
     "test": "tsx --test **/*.test.ts",
     "tsc": "tsc --noEmit",
     "lint:check": "prettier --check .",
