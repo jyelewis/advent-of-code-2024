@@ -5,7 +5,7 @@
 
 # 2024 Challenges
 
-- [Day 01](https://adventofcode.com/2024/day/1): [Part 1](/01/01.ts) ✅, [Part 2](/01/01.ts) ✅
+- [Day 01](https://adventofcode.com/2024/day/1): [Part 1](/01/01.ts) ✅, [Part 2](/01/01.ts) ✅, [Compact version](/01/01-compact.ts) ✅
 - [Day 02](https://adventofcode.com/2024/day/2): [Part 1](/02/02.ts) ✅, [Part 2](/02/02.ts) ✅
 - [Day 03](https://adventofcode.com/2024/day/3): [Part 1](/03/03.ts) ✅, [Part 2](/03/03.ts) ✅, [Compact version](/03/03-compact.ts) ✅, [Minimum version](/03/03-min.js) ✅
 - [Day 04](https://adventofcode.com/2024/day/4): [Part 1](/04/04.ts) ✅, [Part 2](/04/04.ts) ✅, [Compact version](/04/04-compact.ts) ✅, [Minimum version](/04/04-min.js) ✅
