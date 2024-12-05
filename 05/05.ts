@@ -21,24 +21,12 @@ export function day05b(input: string) {
       // filter to only the invalid updates
       .filter((pages) => !pagesAreInValidOrder(orderingRules, pages))
       // fix each invalid update, to follow the provided page ordering rules
-      .map((invalidPages) => {
-        const pages = [...invalidPages];
-
-        // repeatedly swap pages into the correct order until all rules are followed
-        while (!pagesAreInValidOrder(orderingRules, pages)) {
-          for (const [first, second] of orderingRules) {
-            const firstIdx = pages.indexOf(first);
-            const secondIdx = pages.indexOf(second);
-
-            if (secondIdx !== -1 && firstIdx > secondIdx) {
-              // rule is broken - swap items
-              pages[firstIdx] = second;
-              pages[secondIdx] = first;
-            }
-          }
-        }
-        return pages;
-      })
+      .map((invalidPages) =>
+        invalidPages.toSorted((a, b) =>
+          // swap items if they are in the wrong order according to any ordering rule, otherwise leave them
+          orderingRules.some(([first, second]) => a === first && b === second) ? -1 : 0,
+        ),
+      )
       // find middle pages of each, now valid, update
       .map((pages) => pages[Math.floor(pages.length / 2)])
       .sum()
