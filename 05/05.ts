@@ -25,7 +25,7 @@ export function day05b(input: string) {
       // fix each invalid update, to follow the provided page ordering rules
       .map((pages) =>
         pages.toSorted((a, b) =>
-          // swap items if they are in the wrong order according to any ordering rule, otherwise leave them
+          // feed our sort rules (a < b) into the native sort function
           orderingRules.some(([first, second]) => a === first && b === second) ? -1 : 0,
         ),
       )
