@@ -8,8 +8,8 @@ export function day04a(input: string) {
       [
         getString(grid, x, y, 1, 0), // horizontal
         getString(grid, x, y, 0, 1), // vertical
-        getString(grid, x, y, -1, 1), // diagonal forwards
-        getString(grid, x, y, 1, 1), // diagonal backwards
+        getString(grid, x, y, 1, 1), // diagonal forwards
+        getString(grid, x, y, -1, 1), // diagonal backwards
       ].count((str) => str === "XMAS" || str === "SAMX"),
     )
     .sum();
