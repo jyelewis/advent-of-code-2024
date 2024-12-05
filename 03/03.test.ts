@@ -7,22 +7,22 @@ describe("day03", () => {
   const sampleInput = fs.readFileSync("03/example-input.txt").toString("utf-8");
   const input = fs.readFileSync("03/input.txt").toString("utf-8");
 
-  it("02a sample input", () => {
+  it("03a sample input", () => {
     const answer = day03a(sampleInput);
     assert.equal(answer, 161);
   });
 
-  it("02a input", () => {
+  it("03a input", () => {
     const answer = day03a(input);
     assert.equal(answer, 170778545);
   });
 
-  it("02b sample input", () => {
+  it("03b sample input", () => {
     const answer = day03b(sampleInput);
     assert.equal(answer, 48);
   });
 
-  it("02b input", () => {
+  it("03b input", () => {
     const answer = day03b(input);
     assert.equal(answer, 82868252);
   });

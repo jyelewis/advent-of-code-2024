@@ -7,6 +7,8 @@
 
 - [Day 01](https://adventofcode.com/2024/day/1): [Part 1](/01/01.ts) ✅, [Part 2](/01/01.ts) ✅
 - [Day 02](https://adventofcode.com/2024/day/2): [Part 1](/02/02.ts) ✅, [Part 2](/02/02.ts) ✅
+- [Day 03](https://adventofcode.com/2024/day/2): [Part 1](/03/03.ts) ✅, [Part 2](/03/03.ts) ✅
+- [Day 04](https://adventofcode.com/2024/day/2): [Part 1](/04/04.ts) ✅, [Part 2](/04/04.ts) ✅
 
 # Usage
 
