@@ -13,4 +13,4 @@
 
 # Usage
 
-Run all days, and all tests: `yarn test`
+Run all versions of days: `yarn test`
