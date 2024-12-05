@@ -2,6 +2,7 @@ import { describe, it } from "node:test";
 import fs from "fs";
 import assert from "node:assert";
 import { day04a, day04b } from "./04";
+import { day04a_compact } from "./04-compact";
 
 describe("day04", () => {
   const sampleInput = fs.readFileSync("04/example-input.txt").toString("utf-8");
@@ -25,5 +26,15 @@ describe("day04", () => {
   it("04b input", () => {
     const answer = day04b(input);
     assert.equal(answer, 1868);
+  });
+
+  it("04a_compact sample input", () => {
+    const answer = day04a_compact(sampleInput);
+    assert.equal(answer, 18);
+  });
+
+  it("04a_compact input", () => {
+    const answer = day04a_compact(input);
+    assert.equal(answer, 2447);
   });
 });
