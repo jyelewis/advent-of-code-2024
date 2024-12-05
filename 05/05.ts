@@ -39,7 +39,7 @@ export function day05b(input: string) {
         }
         return pages;
       })
-      // find middle pages of each valid update
+      // find middle pages of each, now valid, update
       .map((pages) => pages[Math.floor(pages.length / 2)])
       .sum()
   );
