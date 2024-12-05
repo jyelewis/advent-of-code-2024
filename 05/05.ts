@@ -7,6 +7,7 @@ export function day05a(input: string) {
     updates
       // filter to only valid updates
       .filter((pages) => pagesAreInValidOrder(orderingRules, pages))
+
       // find middle pages of each valid update
       .map((pages) => pages[Math.floor(pages.length / 2)])
       .sum()
@@ -20,13 +21,15 @@ export function day05b(input: string) {
     updates
       // filter to only the invalid updates
       .filter((pages) => !pagesAreInValidOrder(orderingRules, pages))
+
       // fix each invalid update, to follow the provided page ordering rules
-      .map((invalidPages) =>
-        invalidPages.toSorted((a, b) =>
+      .map((pages) =>
+        pages.toSorted((a, b) =>
           // swap items if they are in the wrong order according to any ordering rule, otherwise leave them
           orderingRules.some(([first, second]) => a === first && b === second) ? -1 : 0,
         ),
       )
+
       // find middle pages of each, now valid, update
       .map((pages) => pages[Math.floor(pages.length / 2)])
       .sum()
