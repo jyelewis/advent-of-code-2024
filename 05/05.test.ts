@@ -3,6 +3,8 @@ import fs from "fs";
 import assert from "node:assert";
 import { day05a, day05b } from "./05";
 import { day05_compact } from "./05-compact";
+// @ts-ignore
+import { day05 as day05_min } from "./05-min.js";
 
 describe("day05", () => {
   const sampleInput = fs.readFileSync("05/example-input.txt").toString("utf-8");
@@ -29,13 +31,25 @@ describe("day05", () => {
   });
 
   it("05_compact sample input", () => {
-    const { partA, partB } = day05_compact(sampleInput);
+    const [partA, partB] = day05_compact(sampleInput);
     assert.equal(partA, 143);
     assert.equal(partB, 123);
   });
 
   it("05_compact input", () => {
-    const { partA, partB } = day05_compact(input);
+    const [partA, partB] = day05_compact(input);
+    assert.equal(partA, 5248);
+    assert.equal(partB, 4507);
+  });
+
+  it("05_min sample input", () => {
+    const [partA, partB] = day05_min(sampleInput);
+    assert.equal(partA, 143);
+    assert.equal(partB, 123);
+  });
+
+  it("05_min input", () => {
+    const [partA, partB] = day05_min(input);
     assert.equal(partA, 5248);
     assert.equal(partB, 4507);
   });
