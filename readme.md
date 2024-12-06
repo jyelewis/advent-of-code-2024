@@ -13,9 +13,11 @@
 - [Day 05](https://adventofcode.com/2024/day/5): [Part 1](/05/05.ts) ✅, [Part 2](/05/05.ts) ✅, [Compact version](/05/05-compact.ts) ✅, [Minimum version](/05/05-min.js) ✅
 
 # 2023 Challenges
+
 - [Day 09](https://adventofcode.com/2023/day/9): [Part 1](/2023_09/2023_09.ts) ✅, [Part 2](/2023_09/2023_09.ts) ✅
 
 # Usage
+
 Run all versions of days: `yarn test`
 
 To generate a new day: `yarn generate-day 3`

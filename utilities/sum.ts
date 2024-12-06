@@ -10,6 +10,7 @@ Array.prototype.sum = function (): number {
     if (typeof val !== "number") {
       throw new TypeError("Array contains non-numeric values");
     }
+
     return acc + val;
   }, 0);
 };
