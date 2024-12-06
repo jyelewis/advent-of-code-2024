@@ -20,16 +20,20 @@ export function day06(input: string) {
   const visitedPositions = evaluateGrid(startingPosition, grid)!;
 
   const partA = visitedPositions.length;
-  const partB = visitedPositions
-    .filter(({ x, y }) => grid[y][x] !== "^") // ignore starting position
-    .map(({ x, y }) => {
-      // add walls along our path
-      const newGrid = structuredClone(grid);
-      newGrid[y][x] = "#";
-      return newGrid;
-    })
-    // check how many of these grids cause a loop
-    .count((grid) => evaluateGrid(startingPosition, grid) === null);
+
+  const partB = visitedPositions.count(({ x, y }) => {
+    if (grid[y][x] === "^") {
+      return false;
+    }
+
+    // mutate the original grid to avoid cloning it every time
+    const oldValue = grid[y][x];
+    grid[y][x] = "#";
+    const wouldLoop = evaluateGrid(startingPosition, grid) === null;
+    grid[y][x] = oldValue;
+
+    return wouldLoop;
+  });
 
   return {
     partA,
