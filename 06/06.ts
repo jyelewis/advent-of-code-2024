@@ -6,11 +6,11 @@ interface Position {
 }
 
 enum Direction {
-  Any = 0,
-  Left,
-  Right,
+  Left = 0,
   Up,
+  Right,
   Down,
+  Any = 4,
 }
 
 export function day06(input: string) {
@@ -56,14 +56,6 @@ function moveForward({ x, y }: Position, direction: Direction): Position {
   }
 }
 
-const turnRight = {
-  [Direction.Left]: Direction.Up,
-  [Direction.Right]: Direction.Down,
-  [Direction.Up]: Direction.Right,
-  [Direction.Down]: Direction.Left,
-  [Direction.Any]: Direction.Left,
-};
-
 // re-use the same array to avoid creating a new one every time
 const visitedPositionsIdx: number[] = new Array(100_000).fill(0);
 let evaluationIndex = 0; // each evaluation gets a unique index
@@ -103,8 +95,8 @@ function evaluateGrid(startingPosition: Position, grid: string[][], keepTrack = 
     }
 
     if (grid[nextPosition.y][nextPosition.x] === "#") {
-      // next position is a wall! Rotate 90º to the right
-      currentDirection = turnRight[currentDirection];
+      // next position is a wall! Rotate 90º to the right (next direction in the list)
+      currentDirection = (currentDirection + 1) % 4;
       continue;
     }
 
