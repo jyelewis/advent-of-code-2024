@@ -23,10 +23,12 @@ export function day06(input: string) {
   const partB = visitedPositions
     .filter(({ x, y }) => grid[y][x] !== "^") // ignore starting position
     .map(({ x, y }) => {
+      // add walls along our path
       const newGrid = structuredClone(grid);
       newGrid[y][x] = "#";
       return newGrid;
     })
+    // check how many of these grids cause a loop
     .count((grid) => evaluateGrid(startingPosition, grid) === null);
 
   return {
@@ -60,6 +62,7 @@ const turnRight = {
 
 // positions until we're out of bounds, or null if we loop forever
 function evaluateGrid(startingPosition: Position, grid: string[][]): null | Position[] {
+  // <hacks>
   // I apologise profusely for this
   // can't think of a better way to efficiently store & query visited positions
   const visitedPositions: Position[] = [];
@@ -76,10 +79,11 @@ function evaluateGrid(startingPosition: Position, grid: string[][]): null | Posi
     visitedPositionsSet.add((position.y << 11) + (position.x << 3) + direction);
     visitedPositionsSet.add((position.y << 11) + (position.x << 3) + Direction.Any);
   };
+  // </hacks>
 
+  // run the simulation
   let currentPosition: Position = startingPosition;
   let currentDirection = Direction.Up;
-
   while (true) {
     markVisited(currentPosition, currentDirection);
 
