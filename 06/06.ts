@@ -41,66 +41,75 @@ export function day06(input: string) {
   };
 }
 
-function moveForward({ x, y }: Position, direction: Direction): Position {
+// faster to mutate the position than to create a new one
+function move(pos: Position, direction: Direction, steps = 1) {
   switch (direction) {
     case Direction.Left:
-      return { x: x - 1, y };
+      pos.x -= steps;
+      return;
     case Direction.Right:
-      return { x: x + 1, y };
+      pos.x += steps;
+      return;
     case Direction.Up:
-      return { x, y: y - 1 };
+      pos.y -= steps;
+      return;
     case Direction.Down:
-      return { x, y: y + 1 };
-    case Direction.Any:
-      throw "cannot move forward without a direction";
+      pos.y += steps;
+      return;
+    default:
+      throw "boo";
   }
 }
 
 // re-use the same array to avoid creating a new one every time
-const visitedPositionsIdx: number[] = new Array(100_000).fill(0);
+const visitedPositionsIdx = new Uint16Array(130 * 130 * 5);
 let evaluationIndex = 0; // each evaluation gets a unique index
 
-// positions until we're out of bounds, or null if we loop forever
-function evaluateGrid(startingPosition: Position, grid: string[][], keepTrack = true): null | Position[] {
-  evaluationIndex++;
-  const visitedPositions: Position[] = [];
+// defining these outside the loop allows the JIT to optimize the function across calls
+const hasVisited = (position: Position, direction = Direction.Any) =>
+  visitedPositionsIdx[position.y * 130 * 5 + position.x * 5 + direction] === evaluationIndex;
 
-  const hasVisited = (position: Position, direction = Direction.Any) =>
-    visitedPositionsIdx[position.y * 130 * 5 + position.x * 5 + direction] === evaluationIndex;
-
-  const markVisited = (position: Position, direction: Direction) => {
-    if (keepTrack && !hasVisited(position)) {
-      visitedPositions.push(position);
-    }
-
-    visitedPositionsIdx[position.y * 130 * 5 + position.x * 5 + direction] = evaluationIndex;
+const markVisited = (position: Position, direction: Direction, visitedPositions?: Position[]) => {
+  if (visitedPositions && !hasVisited(position)) {
+    visitedPositions.push({ ...position });
     visitedPositionsIdx[position.y * 130 * 5 + position.x * 5 + Direction.Any] = evaluationIndex;
-  };
+  }
+
+  visitedPositionsIdx[position.y * 130 * 5 + position.x * 5 + direction] = evaluationIndex;
+};
+
+// positions until we're out of bounds, or null if we loop forever
+function evaluateGrid(position: Position, grid: string[][], keepTrack = true): null | Position[] {
+  evaluationIndex++;
+  const visitedPositions: undefined | Position[] = keepTrack ? [] : undefined;
+
+  // we're about to mutate this - take a copy
+  position = { ...position };
+  let direction = Direction.Up;
 
   // run the simulation
-  let currentPosition: Position = startingPosition;
-  let currentDirection = Direction.Up;
   while (true) {
-    markVisited(currentPosition, currentDirection);
+    markVisited(position, direction, visitedPositions);
+    move(position, direction);
 
-    const nextPosition = moveForward(currentPosition, currentDirection);
-    if (hasVisited(nextPosition, currentDirection)) {
+    if (hasVisited(position, direction)) {
       // we've been here... must cause a loop
       return null;
     }
 
-    if (grid[nextPosition.y]?.[nextPosition.x] === undefined) {
+    const currentTile = grid[position.y]?.[position.x];
+    if (currentTile === undefined) {
       // we've escaped, return the positions we've visited
-      return visitedPositions;
+      // or an empty array if we weren't keeping track
+      return visitedPositions || [];
     }
 
-    if (grid[nextPosition.y][nextPosition.x] === "#") {
+    if (currentTile === "#") {
+      // we've walked into a wall - take a step backwards then turn
+      move(position, direction, -1);
+
       // next position is a wall! Rotate 90º to the right (next direction in the list)
-      currentDirection = (currentDirection + 1) % 4;
-      continue;
+      direction = (direction + 1) % 4;
     }
-
-    // just keep swimming
-    currentPosition = nextPosition;
   }
 }
