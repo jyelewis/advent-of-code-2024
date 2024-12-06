@@ -29,7 +29,7 @@ export function day06(input: string) {
     // mutate the original grid to avoid cloning it every time
     const oldValue = grid[y][x];
     grid[y][x] = "#";
-    const wouldLoop = evaluateGrid(startingPosition, grid) === null;
+    const wouldLoop = evaluateGrid(startingPosition, grid, false) === null;
     grid[y][x] = oldValue;
 
     return wouldLoop;
@@ -65,7 +65,7 @@ const turnRight = {
 };
 
 // positions until we're out of bounds, or null if we loop forever
-function evaluateGrid(startingPosition: Position, grid: string[][]): null | Position[] {
+function evaluateGrid(startingPosition: Position, grid: string[][], keepTrack = true): null | Position[] {
   // <hacks>
   // I apologise profusely for this
   // can't think of a better way to efficiently store & query visited positions
@@ -76,7 +76,7 @@ function evaluateGrid(startingPosition: Position, grid: string[][]): null | Posi
     visitedPositionsSet.has((position.y << 11) + (position.x << 3) + direction);
 
   const markVisited = (position: Position, direction: Direction) => {
-    if (!hasVisited(position)) {
+    if (keepTrack && !hasVisited(position)) {
       visitedPositions.push(position);
     }
 
