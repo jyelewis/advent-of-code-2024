@@ -64,26 +64,26 @@ const turnRight = {
   [Direction.Any]: Direction.Left,
 };
 
+// re-use the same array to avoid creating a new one every time
+const visitedPositionsIdx: number[] = new Array(100_000).fill(0);
+let evaluationIndex = 0; // each evaluation gets a unique index
+
 // positions until we're out of bounds, or null if we loop forever
 function evaluateGrid(startingPosition: Position, grid: string[][], keepTrack = true): null | Position[] {
-  // <hacks>
-  // I apologise profusely for this
-  // can't think of a better way to efficiently store & query visited positions
+  evaluationIndex++;
   const visitedPositions: Position[] = [];
-  const visitedPositionsSet = new Set<number>();
 
   const hasVisited = (position: Position, direction = Direction.Any) =>
-    visitedPositionsSet.has((position.y << 11) + (position.x << 3) + direction);
+    visitedPositionsIdx[position.y * 130 * 5 + position.x * 5 + direction] === evaluationIndex;
 
   const markVisited = (position: Position, direction: Direction) => {
     if (keepTrack && !hasVisited(position)) {
       visitedPositions.push(position);
     }
 
-    visitedPositionsSet.add((position.y << 11) + (position.x << 3) + direction);
-    visitedPositionsSet.add((position.y << 11) + (position.x << 3) + Direction.Any);
+    visitedPositionsIdx[position.y * 130 * 5 + position.x * 5 + direction] = evaluationIndex;
+    visitedPositionsIdx[position.y * 130 * 5 + position.x * 5 + Direction.Any] = evaluationIndex;
   };
-  // </hacks>
 
   // run the simulation
   let currentPosition: Position = startingPosition;
