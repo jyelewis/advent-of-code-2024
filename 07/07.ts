@@ -5,7 +5,7 @@ export function day07(input: string) {
     parse2DArray(input)
       .filter(([goal, ...testValues]) =>
         // check if the goal is in the possible outputs
-        possibleOutputsForTestValues(testValues.toReversed(), includeConcat).includes(goal),
+        possibleOutputsForTestValues(goal, testValues.toReversed(), includeConcat).includes(goal),
       )
       .map(([goal]) => goal)
       .sum();
@@ -21,9 +21,9 @@ const fastConcat = (num1: number, num2: number) => num1 * Math.pow(10, Math.floo
 
 // testValues -> all possible combinations
 // input is expected to be reversed, so we can work backwards
-function possibleOutputsForTestValues([last, ...rest]: number[], includeConcat: boolean): number[] {
+function possibleOutputsForTestValues(goal: number, [last, ...rest]: number[], includeConcat: boolean): number[] {
   const combineTwoValues = (a: number, b: number) =>
-    includeConcat ? [a + b, a * b, fastConcat(a, b)] : [a + b, a * b];
+    includeConcat ? [a + b, a * b, fastConcat(a, b)].filter((x) => x <= goal) : [a + b, a * b];
 
   // base case, all operations between final two values
   if (rest.length === 1) {
@@ -31,5 +31,5 @@ function possibleOutputsForTestValues([last, ...rest]: number[], includeConcat: 
   }
 
   // recursive case, get the deepest pair of values and work outwards
-  return possibleOutputsForTestValues(rest, includeConcat).flatMap((value) => combineTwoValues(value, last));
+  return possibleOutputsForTestValues(goal, rest, includeConcat).flatMap((value) => combineTwoValues(value, last));
 }
