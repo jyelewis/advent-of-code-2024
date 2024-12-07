@@ -16,11 +16,14 @@ export function day07(input: string) {
   };
 }
 
+// I will not be explaining myself
+const fastConcat = (num1: number, num2: number) => num1 * Math.pow(10, Math.floor(Math.log10(num2)) + 1) + num2;
+
 // testValues -> all possible combinations
 // input is expected to be reversed, so we can work backwards
 function possibleOutputsForTestValues([last, ...rest]: number[], includeConcat: boolean): number[] {
   const combineTwoValues = (a: number, b: number) =>
-    includeConcat ? [a + b, a * b, parseInt(`${a}${b}`, 10)] : [a + b, a * b];
+    includeConcat ? [a + b, a * b, fastConcat(a, b)] : [a + b, a * b];
 
   // base case, all operations between final two values
   if (rest.length === 1) {
