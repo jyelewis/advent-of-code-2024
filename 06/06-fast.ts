@@ -13,7 +13,7 @@ enum Direction {
   Any = 4,
 }
 
-export function day06(input: string) {
+export function day06_fast(input: string) {
   const grid = input.split("\n").map((line) => line.split(""));
   const startingPosition: Position = range2D(grid).find((pos) => grid[pos.y][pos.x] === "^")!;
 
@@ -29,7 +29,7 @@ export function day06(input: string) {
     // mutate the original grid to avoid cloning it every time
     const oldValue = grid[y][x];
     grid[y][x] = "#";
-    const wouldLoop = evaluateGridFast(startingPosition, grid) === null;
+    const wouldLoop = getsStuckInLoop(startingPosition, grid);
     grid[y][x] = oldValue;
 
     return wouldLoop;
@@ -65,23 +65,10 @@ function move(pos: Position, direction: Direction, steps = 1) {
 const visitedPositionsIdx = new Uint16Array(130 * 130 * 5);
 let evaluationIndex = 0; // each evaluation gets a unique index
 
-// defining these outside the loop allows the JIT to optimize the function across calls
-const hasVisited = (position: Position, direction = Direction.Any) =>
-  visitedPositionsIdx[position.y * 130 * 5 + position.x * 5 + direction] === evaluationIndex;
-
-const markVisited = (position: Position, direction: Direction, visitedPositions?: Position[]) => {
-  if (visitedPositions && !hasVisited(position)) {
-    visitedPositions.push({ ...position });
-    visitedPositionsIdx[position.y * 130 * 5 + position.x * 5 + Direction.Any] = evaluationIndex;
-  }
-
-  visitedPositionsIdx[position.y * 130 * 5 + position.x * 5 + direction] = evaluationIndex;
-};
-
-// positions until we're out of bounds, or null if we loop forever
-function evaluateGrid(position: Position, grid: string[][], keepTrack = true): null | Position[] {
+// positions until we're out of bounds
+function evaluateGrid(position: Position, grid: string[][]): Position[] {
   evaluationIndex++;
-  const visitedPositions: undefined | Position[] = keepTrack ? [] : undefined;
+  const visitedPositions: Position[] = [];
 
   // we're about to mutate this - take a copy
   position = { ...position };
@@ -89,13 +76,13 @@ function evaluateGrid(position: Position, grid: string[][], keepTrack = true): n
 
   // run the simulation
   while (true) {
-    markVisited(position, direction, visitedPositions);
-    move(position, direction);
-
-    if (hasVisited(position, direction)) {
-      // we've been here... must cause a loop
-      return null;
+    const hasVisited = visitedPositionsIdx[position.y * 130 * 5 + position.x * 5 + Direction.Any] === evaluationIndex;
+    if (!hasVisited) {
+      visitedPositions.push({ ...position });
+      visitedPositionsIdx[position.y * 130 * 5 + position.x * 5 + Direction.Any] = evaluationIndex;
     }
+
+    move(position, direction);
 
     const currentTile = grid[position.y]?.[position.x];
     if (currentTile === undefined) {
@@ -114,7 +101,7 @@ function evaluateGrid(position: Position, grid: string[][], keepTrack = true): n
   }
 }
 
-function evaluateGridFast(position: Position, grid: string[][]): null | Position[] {
+function getsStuckInLoop(position: Position, grid: string[][]): boolean {
   evaluationIndex++;
 
   // we're about to mutate this - take a copy
@@ -127,9 +114,8 @@ function evaluateGridFast(position: Position, grid: string[][]): null | Position
 
     const currentTile = grid[position.y]?.[position.x];
     if (currentTile === undefined) {
-      // we've escaped, return the positions we've visited
-      // or an empty array if we weren't keeping track
-      return [];
+      // we've escaped, no loop
+      return false;
     }
 
     if (currentTile === "#") {
@@ -137,11 +123,13 @@ function evaluateGridFast(position: Position, grid: string[][]): null | Position
       move(position, direction, -1);
 
       // check if we've bumped into this wall facing this direction before
-      if (hasVisited(position, direction)) {
-        // we've been here... must cause a loop
-        return null;
+      const hasVisitedThisSpot =
+        visitedPositionsIdx[position.y * 130 * 5 + position.x * 5 + direction] === evaluationIndex;
+      if (hasVisitedThisSpot) {
+        // we've been here... we're in a loop
+        return true;
       }
-      markVisited(position, direction);
+      visitedPositionsIdx[position.y * 130 * 5 + position.x * 5 + direction] = evaluationIndex;
 
       // next position is a wall! Rotate 90º to the right (next direction in the list)
       direction = (direction + 1) % 4;
