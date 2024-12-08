@@ -13,6 +13,7 @@
 - [Day 05](https://adventofcode.com/2024/day/5): [Part 1](/05/05.ts) ✅, [Part 2](/05/05.ts) ✅, [Compact version](/05/05-compact.ts) ✅, [Minimum version](/05/05-min.js) ✅
 - [Day 06](https://adventofcode.com/2024/day/6): [Part 1](/06/06.ts) ✅, [Part 2](/06/06.ts) ✅
 - [Day 07](https://adventofcode.com/2024/day/7): [Part 1](/07/07.ts) ✅, [Part 2](/07/07.ts) ✅
+- [Day 08](https://adventofcode.com/2024/day/8): [Part 1](/08/08.ts) ✅, [Part 2](/08/08.ts) ✅
 
 # 2023 Challenges
 
