@@ -3,7 +3,6 @@ import { Pos, range2D } from "../utilities";
 export function day10(input: string) {
   const grid = input.split("\n").map((line) => line.split("").map((n) => parseInt(n, 10)));
 
-  // find peaks for each trailhead
   const trailheadPeaks = range2D(grid)
     .filter(({ value }) => value === 0)
     .map((pos) => trailsFrom(grid, pos));
@@ -17,13 +16,11 @@ export function day10(input: string) {
 function trailsFrom(grid: number[][], { x, y }: Pos, previousValue: number = -1): Pos[] {
   const currentValue = grid[y]?.[x];
   if (currentValue === undefined || currentValue !== previousValue + 1) {
-    // out of bounds or not one step up :(
-    return [];
+    return []; // out of bounds or not one step up :(
   }
 
   if (currentValue === 9) {
-    // yay we reached a peek
-    return [{ x, y }];
+    return [{ x, y }]; // yay we reached a peek
   }
 
   return [
