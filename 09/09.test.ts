@@ -25,9 +25,7 @@ describe("day09", () => {
   });
 
   it("09b input", () => {
-    console.time("09b");
     const answer = day09b(input);
-    console.timeEnd("09b");
     assert.equal(answer, 6265268809555);
   });
 });
