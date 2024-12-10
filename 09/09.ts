@@ -10,19 +10,30 @@ export function day09a(input: string) {
       return new Array(size).fill(isFreeSpace ? "." : fileId);
     });
 
+  let firstFreeSpaceIndex = expanded.findIndex((c) => c === ".");
+  let lastBlockIndex = expanded.findLastIndex((c) => c !== ".");
+
   while (true) {
     // find last block from the right
-    const firstFreeSpace = expanded.findIndex((c) => c === ".");
-    const lastBlockIndex = expanded.findLastIndex((c) => c !== ".");
+    // const firstFreeSpace = expanded.findIndex((c) => c === ".");
+    // const lastBlockIndex = expanded.findLastIndex((c) => c !== ".");
 
-    if (firstFreeSpace > lastBlockIndex) {
+    if (firstFreeSpaceIndex > lastBlockIndex) {
       // we're done!
       break;
     }
 
     // move block into free space on the left
-    expanded[firstFreeSpace] = expanded[lastBlockIndex];
+    expanded[firstFreeSpaceIndex] = expanded[lastBlockIndex];
     expanded[lastBlockIndex] = ".";
+
+    // look for the next free space
+    while (expanded[firstFreeSpaceIndex] !== ".") {
+      firstFreeSpaceIndex++;
+    }
+    while (expanded[lastBlockIndex] === ".") {
+      lastBlockIndex--;
+    }
   }
 
   // calculate checksum
