@@ -56,7 +56,16 @@ export function day09b(input: string) {
       fileIndex--;
     }
 
-    const freeSpaceIndex = disk.findIndex((x, i) => x.fileId === null && x.size >= file.size && i < fileIndex);
+    // search for free space
+    let freeSpaceIndex = 0;
+    while (freeSpaceIndex < fileIndex) {
+      let freeSpace = disk[freeSpaceIndex];
+      if (freeSpace.fileId === null && freeSpace.size >= file.size) {
+        break;
+      }
+      freeSpaceIndex++;
+    }
+
     const freeSpace = disk[freeSpaceIndex];
 
     if (freeSpaceIndex === -1) {
