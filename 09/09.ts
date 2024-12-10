@@ -1,5 +1,6 @@
 import "../utilities";
 
+// pretty gross, but its fast
 export function day09a(input: string) {
   const expanded = input
     .split("")
@@ -14,10 +15,6 @@ export function day09a(input: string) {
   let lastBlockIndex = expanded.findLastIndex((c) => c !== ".");
 
   while (true) {
-    // find last block from the right
-    // const firstFreeSpace = expanded.findIndex((c) => c === ".");
-    // const lastBlockIndex = expanded.findLastIndex((c) => c !== ".");
-
     if (firstFreeSpaceIndex > lastBlockIndex) {
       // we're done!
       break;
@@ -51,9 +48,13 @@ export function day09b(input: string) {
     size: parseInt(c, 10),
   }));
 
+  let fileIndex = disk.length - 1;
+
   for (const file of disk.filter((x) => x.fileId !== null).toReversed()) {
     // try to fit file as close to the start of the disk as possible
-    const fileIndex = disk.findIndex((x) => x.fileId === file.fileId);
+    while (disk[fileIndex].fileId !== file.fileId) {
+      fileIndex--;
+    }
 
     const freeSpaceIndex = disk.findIndex((x, i) => x.fileId === null && x.size >= file.size && i < fileIndex);
     const freeSpace = disk[freeSpaceIndex];
