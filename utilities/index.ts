@@ -1,5 +1,6 @@
 import "./sum";
 import "./count";
+import "./inc";
 
 export { range } from "./range";
 export { range2D } from "./range2D";
