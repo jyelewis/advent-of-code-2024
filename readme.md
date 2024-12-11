@@ -14,6 +14,9 @@
 - [Day 06](https://adventofcode.com/2024/day/6): [Part 1](/06/06.ts) ✅, [Part 2](/06/06.ts) ✅
 - [Day 07](https://adventofcode.com/2024/day/7): [Part 1](/07/07.ts) ✅, [Part 2](/07/07.ts) ✅
 - [Day 08](https://adventofcode.com/2024/day/8): [Part 1](/08/08.ts) ✅, [Part 2](/08/08.ts) ✅
+- [Day 09](https://adventofcode.com/2024/day/8): [Part 1](/09/09.ts) ✅, [Part 2](/09/09.ts) ✅
+- [Day 10](https://adventofcode.com/2024/day/8): [Part 1](/10/10.ts) ✅, [Part 2](/10/10.ts) ✅
+- [Day 11](https://adventofcode.com/2024/day/8): [Part 1](/11/11.ts) ✅, [Part 2](/11/11.ts) ✅
 
 # 2023 Challenges
 
