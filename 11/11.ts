@@ -26,11 +26,10 @@ export function countStones(input: string, blinks: number) {
 function processStone(stone: number): number[] {
   if (stone === 0) return [1];
 
-  const stoneDigits = stone.toString(10);
-  if (stoneDigits.length % 2 === 0) {
-    return [stoneDigits.substring(0, stoneDigits.length / 2), stoneDigits.substring(stoneDigits.length / 2)].map(
-      Number,
-    );
+  const numDigits = Math.floor(Math.log10(stone) + 1);
+  if (numDigits % 2 === 0) {
+    const divisor = 10 ** (numDigits / 2);
+    return [Math.floor(stone / divisor), stone % divisor];
   }
 
   return [stone * 2024];
