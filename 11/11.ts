@@ -1,21 +1,16 @@
-import { range } from "../utilities";
+import "../utilities";
 
-export function day11a(input: string) {
-  // brute force method
-  const stones = range(25).reduce(
-    (stones) => stones.flatMap(processStone),
-    input.split(" ").map((x) => parseInt(x, 10)),
-  );
+export const day11 = (input: string) => ({
+  partA: countStones(input, 25),
+  partB: countStones(input, 75),
+});
 
-  return stones.length;
-}
-
-export function day11b(input: string) {
+export function countStones(input: string, blinks: number) {
   // create & populate a map of stones we have, and how many of each we have
   const stones = new Map<number, number>(); // stone number -> count
   input.split(" ").forEach((stone) => stones.set(parseInt(stone, 10), 1));
 
-  for (let i = 0; i < 75; i++) {
+  for (let i = 0; i < blinks; i++) {
     for (const [stone, count] of Array.from(stones.entries())) {
       // process this stone, and add the newly created stones to our map
       processStone(stone).forEach((newStone) => stones.inc(newStone, count));
