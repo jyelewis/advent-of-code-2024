@@ -18,7 +18,6 @@
   "dependencies": {
     "@types/node": "^22.10.1",
     "prettier": "^3.4.1",
-    "scanf": "^1.2.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
