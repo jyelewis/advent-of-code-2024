@@ -2,12 +2,30 @@ import fs from "fs";
 import { exec } from "node:child_process";
 import assert from "node:assert";
 
+const DEFAULT_YEAR = 2024;
+
 export async function main() {
   assert(process.env.AOC_SESSION_TOKEN, "AOC_SESSION_TOKEN is required");
 
-  const dayNum = parseInt(process.argv[2], 10);
-  const dayString = dayNum.toString().padStart(2, "0");
-  console.log("Generating day", dayString);
+  const challengeStr = process.argv[2];
+  const yearSpecified = challengeStr.includes("_");
+
+  let dayNum = 0;
+  let yearNum = 0;
+  let dayString = "00";
+
+  if (yearSpecified) {
+    const [yearPart, dayPart] = challengeStr.split("_");
+    yearNum = parseInt(yearPart, 10);
+    dayNum = parseInt(dayPart, 10);
+    dayString = `${yearNum.toString()}_${dayNum.toString().padStart(2, "0")}`;
+  } else {
+    yearNum = DEFAULT_YEAR;
+    dayNum = parseInt(process.argv[2], 10);
+    dayString = dayNum.toString().padStart(2, "0");
+  }
+
+  console.log("Generating challenge", dayString);
 
   const source = fs.readFileSync("template/00.ts").toString("utf-8").replaceAll("00", dayString);
   const testSource = fs
@@ -22,7 +40,7 @@ export async function main() {
 
   fs.writeFileSync(`${dayString}/example-input.txt`, "");
 
-  const input = await fetch(`https://adventofcode.com/2024/day/${dayNum}/input`, {
+  const input = await fetch(`https://adventofcode.com/${yearNum}/day/${dayNum}/input`, {
     headers: {
       Cookie: `session=${process.env.AOC_SESSION_TOKEN}`,
     },
