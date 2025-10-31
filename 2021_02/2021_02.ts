@@ -1,12 +1,12 @@
 import "../utilities";
-import { parse } from "../utilities/parse";
+import { sscanf } from "../utilities/sscanf";
 
 export function day2021_02a(input: string) {
   let horzPosition = 0;
   let depth = 0;
 
   input.split("\n").forEach((line) => {
-    const [command, value] = parse`${String} ${Number}`(line);
+    const [command, value] = sscanf`${String} ${Number}`(line);
 
     switch (command) {
       case "forward":
@@ -30,7 +30,7 @@ export function day2021_02b(input: string) {
   let aim = 0;
 
   input.split("\n").forEach((line) => {
-    const [command, value] = parse`${String} ${Number}`(line);
+    const [command, value] = sscanf`${String} ${Number}`(line);
 
     switch (command) {
       case "forward":

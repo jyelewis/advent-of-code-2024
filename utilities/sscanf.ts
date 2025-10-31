@@ -1,5 +1,5 @@
 // TODO: this is so horrendous, but want to prove its value before cleaning up
-export const parse =
+export const sscanf =
   (staticSections: TemplateStringsArray, ...types: any[]) =>
   (input: string): any[] => {
     let rest = input;
