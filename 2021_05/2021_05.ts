@@ -15,46 +15,36 @@ export function day2021(input: string) {
   const flatLines = lines.filter((line) => line.fromX === line.toX || line.fromY === line.toY);
 
   return {
-    partA: countCellsWithMoreThanOneLineV3(flatLines),
-    partB: countCellsWithMoreThanOneLineV3(lines),
+    partA: countCellsWithMoreThanOneLine(flatLines),
+    partB: countCellsWithMoreThanOneLine(lines),
   };
 }
 
-function stepDirection(from: number, to: number) {
-  if (from < to) {
-    return 1;
-  }
-  if (from > to) {
-    return -1;
-  }
-  return 0;
-}
-
-function countCellsWithMoreThanOneLineV3(lines: any[]): number {
-  const cellsToCheck = new Map<string, { x: number; y: number }>();
-  lines.forEach((line) => {
-    const xStep = stepDirection(line.fromX, line.toX);
-    const yStep = stepDirection(line.fromY, line.toY);
-
-    let x = line.fromX;
-    let y = line.fromY;
-    while (true) {
-      cellsToCheck.set(`${x},${y}`, { x, y });
-
-      if (x === line.toX && y === line.toY) {
-        break;
-      }
-
-      x += xStep;
-      y += yStep;
-    }
-  });
-
+function countCellsWithMoreThanOneLine(lines: any[]): number {
   return (
-    cellsToCheck
-      .values()
-      // filter to cells with at least 2 lines
-      .filter(
+    lines
+      // create a list of cells for each line
+      .flatMap((line) => {
+        let x = line.fromX;
+        let y = line.fromY;
+
+        let cells = [];
+        while (true) {
+          cells.push({ x, y });
+
+          if (x === line.toX && y === line.toY) {
+            break;
+          }
+
+          x += stepDirection(line.fromX, line.toX);
+          y += stepDirection(line.fromY, line.toY);
+        }
+
+        return cells;
+      })
+      .dedup(({ x, y }) => `${x},${y}`)
+      // count which unique cells have 2 or more lines crossing them
+      .count(
         (cell) =>
           lines.count((line) => {
             const isWithinBounds =
@@ -70,7 +60,11 @@ function countCellsWithMoreThanOneLineV3(lines: any[]): number {
             return isWithinBounds && (isVertical || isHorizontal || isDiagonal);
           }) >= 2,
       )
-      // count how many cells we're left with
-      .reduce((acc) => acc + 1, 0)
   );
+}
+
+function stepDirection(from: number, to: number) {
+  if (from < to) return 1;
+  if (from > to) return -1;
+  return 0;
 }
