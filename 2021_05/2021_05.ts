@@ -14,14 +14,7 @@ export function day2021(input: string) {
 
   const flatLines = lines.filter((line) => line.fromX === line.toX || line.fromY === line.toY);
 
-  return {
-    partA: countCellsWithMoreThanOneLine(flatLines),
-    partB: countCellsWithMoreThanOneLine(lines),
-  };
-}
-
-function countCellsWithMoreThanOneLine(lines: any[]): number {
-  return (
+  const countCellsWithMoreThanOneLine = (lines: typeof flatLines): number =>
     lines
       // create a list of cells for each line
       .flatMap((line) => {
@@ -59,8 +52,12 @@ function countCellsWithMoreThanOneLine(lines: any[]): number {
 
             return isWithinBounds && (isVertical || isHorizontal || isDiagonal);
           }) >= 2,
-      )
-  );
+      );
+
+  return {
+    partA: countCellsWithMoreThanOneLine(flatLines),
+    partB: countCellsWithMoreThanOneLine(lines),
+  };
 }
 
 function stepDirection(from: number, to: number) {
