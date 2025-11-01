@@ -1,13 +1,5 @@
-import "../utilities";
 import { parse2DArray, range } from "../utilities";
 import assert from "node:assert";
-
-function boardHasWon(board: number[][], markedNumbers: number[]): boolean {
-  const anyRowIsComplete = range(board.length).some((row) => board[row].every((cell) => markedNumbers.includes(cell)));
-  const anyColIsComplete = range(board[0].length).some((col) => board.every((row) => markedNumbers.includes(row[col])));
-
-  return anyRowIsComplete || anyColIsComplete;
-}
 
 export function day2021_04a(input: string) {
   const [bingoNumbersStr, ...boardStrs] = input.split("\n\n");
@@ -64,4 +56,11 @@ export function day2021_04b(input: string) {
   }
 
   assert(false);
+}
+
+function boardHasWon(board: number[][], markedNumbers: number[]): boolean {
+  const anyRowIsComplete = range(board.length).some((row) => board[row].every((cell) => markedNumbers.includes(cell)));
+  const anyColIsComplete = range(board[0].length).some((col) => board.every((row) => markedNumbers.includes(row[col])));
+
+  return anyRowIsComplete || anyColIsComplete;
 }
