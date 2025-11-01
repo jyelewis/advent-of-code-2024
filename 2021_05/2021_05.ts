@@ -1,4 +1,4 @@
-import { range2D, sscanf } from "../utilities";
+import { sscanf } from "../utilities";
 
 export function day2021(input: string) {
   const lines = input.split("\n").map((line) => {
@@ -15,36 +15,62 @@ export function day2021(input: string) {
   const flatLines = lines.filter((line) => line.fromX === line.toX || line.fromY === line.toY);
 
   return {
-    partA: countCellsWithMoreThanOneLine(flatLines),
-    partB: countCellsWithMoreThanOneLine(lines),
+    partA: countCellsWithMoreThanOneLineV3(flatLines),
+    partB: countCellsWithMoreThanOneLineV3(lines),
   };
 }
 
-function countCellsWithMoreThanOneLine(lines: any[]): number {
-  const gridXStart = Math.min(...lines.map((line) => Math.min(line.fromX, line.toX)));
-  const gridXEnd = Math.max(...lines.map((line) => Math.max(line.fromX, line.toX)));
-  const gridYStart = Math.min(...lines.map((line) => Math.min(line.fromY, line.toY)));
-  const gridYEnd = Math.max(...lines.map((line) => Math.max(line.fromY, line.toY)));
+function stepDirection(from: number, to: number) {
+  if (from < to) {
+    return 1;
+  }
+  if (from > to) {
+    return -1;
+  }
+  return 0;
+}
 
-  return range2D(gridXEnd - gridXStart + 1, gridYEnd - gridYStart + 1)
-    .map((cell) => {
-      const x = cell.x + gridXStart;
-      const y = cell.y + gridYStart;
+function countCellsWithMoreThanOneLineV3(lines: any[]): number {
+  const cellsToCheck = new Map<string, { x: number; y: number }>();
+  lines.forEach((line) => {
+    const xStep = stepDirection(line.fromX, line.toX);
+    const yStep = stepDirection(line.fromY, line.toY);
 
-      // count the lines passing through 'cell'
-      return lines.count((line) => {
-        const isWithinBounds =
-          Math.min(line.fromX, line.toX) <= x &&
-          x <= Math.max(line.fromX, line.toX) &&
-          Math.min(line.fromY, line.toY) <= y &&
-          y <= Math.max(line.fromY, line.toY);
+    let x = line.fromX;
+    let y = line.fromY;
+    while (true) {
+      cellsToCheck.set(`${x},${y}`, { x, y });
 
-        const isVertical = line.fromX === line.toX;
-        const isHorizontal = line.fromY === line.toY;
-        const isDiagonal = Math.abs(x - line.fromX) === Math.abs(y - line.fromY);
+      if (x === line.toX && y === line.toY) {
+        break;
+      }
 
-        return isWithinBounds && (isVertical || isHorizontal || isDiagonal);
-      });
-    })
-    .count((linesCrossing) => linesCrossing >= 2);
+      x += xStep;
+      y += yStep;
+    }
+  });
+
+  return (
+    cellsToCheck
+      .values()
+      // filter to cells with at least 2 lines
+      .filter(
+        (cell) =>
+          lines.count((line) => {
+            const isWithinBounds =
+              Math.min(line.fromX, line.toX) <= cell.x &&
+              cell.x <= Math.max(line.fromX, line.toX) &&
+              Math.min(line.fromY, line.toY) <= cell.y &&
+              cell.y <= Math.max(line.fromY, line.toY);
+
+            const isVertical = line.fromX === line.toX;
+            const isHorizontal = line.fromY === line.toY;
+            const isDiagonal = Math.abs(cell.x - line.fromX) === Math.abs(cell.y - line.fromY);
+
+            return isWithinBounds && (isVertical || isHorizontal || isDiagonal);
+          }) >= 2,
+      )
+      // count how many cells we're left with
+      .reduce((acc) => acc + 1, 0)
+  );
 }
