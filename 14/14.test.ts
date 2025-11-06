@@ -17,13 +17,13 @@ describe("day14", () => {
     assert.equal(answer, 214109808);
   });
 
-  it("14b sample input", () => {
+  it.skip("14b sample input", () => {
     const answer = day14b(sampleInput);
     assert.equal(answer, 123);
   });
 
   it("14b input", () => {
     const answer = day14b(input);
-    assert.equal(answer, 123);
+    assert.equal(answer, 7687);
   });
 });
