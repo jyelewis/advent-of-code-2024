@@ -8,7 +8,7 @@ export function day10(input: string) {
     .map((pos) => trailsFrom(grid, pos));
 
   return {
-    partA: trailheadPeaks.map((peaks) => new Set(peaks.map((p) => `${p.x},${p.y}`)).size).sum(),
+    partA: trailheadPeaks.map((peaks) => peaks.dedup((p) => `${p.x},${p.y}`).length).sum(),
     partB: trailheadPeaks.map((peaks) => peaks.length).sum(),
   };
 }
