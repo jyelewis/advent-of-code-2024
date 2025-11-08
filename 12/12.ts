@@ -1,11 +1,12 @@
-import { Pos, range2D } from "../utilities";
+import { IPos, range2D } from "../utilities";
 
 export interface Region {
   plantType: string;
-  cells: Pos[];
+  cells: IPos[];
 }
 
-function isAdjacent(a: Pos, b: Pos) {
+// TODO: move this to Position class
+function isAdjacent(a: IPos, b: IPos) {
   return Math.abs(a.x - b.x) + Math.abs(a.y - b.y) === 1;
 }
 
@@ -141,7 +142,7 @@ export function day12(input: string) {
   const regions: Region[] = [];
 
   // gross, we mutate cells
-  const findRegion = (x: number, y: number, plantType: string, cells: Pos[]) => {
+  const findRegion = (x: number, y: number, plantType: string, cells: IPos[]) => {
     // out of bounds
     if (x < 0 || y < 0 || x >= grid[0].length || y >= grid.length) {
       return;
@@ -167,7 +168,7 @@ export function day12(input: string) {
   };
 
   range2D(grid).forEach(({ x, y, value: plantType }) => {
-    const cells: Pos[] = [];
+    const cells: IPos[] = [];
     findRegion(x, y, plantType, cells);
     if (cells.length > 0) {
       regions.push({ plantType, cells });

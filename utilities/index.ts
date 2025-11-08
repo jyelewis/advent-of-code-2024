@@ -9,7 +9,12 @@ export { parse2DArray } from "./parse2DArray";
 export { time } from "./time";
 export { sscanf } from "./sscanf";
 
-export interface Pos {
+// new stuff
+export { Position, Direction } from "./Position";
+export { Grid } from "./Grid";
+
+// TODO: remove me once migrated
+export interface IPos {
   x: number;
   y: number;
 }
