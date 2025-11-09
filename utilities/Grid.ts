@@ -2,7 +2,7 @@ import { Position } from "./Position";
 import { range2D } from "./range2D";
 import assert from "node:assert";
 
-export class Grid<PosValue> {
+export class Grid<PosValue = any> {
   public readonly width: number;
   public readonly height: number;
   constructor(public readonly items: PosValue[][]) {

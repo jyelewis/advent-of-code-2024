@@ -4,10 +4,6 @@ export class Direction {
     public dy: number,
   ) {}
 
-  stretch(length: number) {
-    return new Direction(this.dx * length, this.dy * length);
-  }
-
   static UP = new Direction(0, -1);
   static DOWN = new Direction(0, 1);
   static LEFT = new Direction(-1, 0);
@@ -26,12 +22,17 @@ export class Position<Value = any> {
     public value: Value,
   ) {}
 
-  public move(direction: Direction) {
-    return new Position<Value>(this.x + direction.dx, this.y + direction.dy, this.value);
+  public move(direction: Direction, steps: number = 1) {
+    // TODO: footgun, within grids would expect this to select another cell
+    return new Position<Value>(this.x + direction.dx * steps, this.y + direction.dy * steps, this.value);
   }
 
   get key() {
     return `${this.x},${this.y}`;
+  }
+
+  equals(other?: Position) {
+    return other && this.x === other.x && this.y === other.y;
   }
 
   toString() {

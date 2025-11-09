@@ -1,5 +1,4 @@
-import "../utilities";
-import { sscanf } from "../utilities/sscanf";
+import { sscanf } from "../utilities";
 
 export function day2021_02a(input: string) {
   let horzPosition = 0;

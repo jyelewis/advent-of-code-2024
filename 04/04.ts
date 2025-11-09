@@ -30,6 +30,6 @@ export function day04b(input: string) {
 
 function getString(grid: Grid<string>, pos: Position<string>, dir: Direction, length: number = 4): string {
   return range(length) // follow a path of [length] through the grid, starting from x,y and stepping by dir, drop OOB values
-    .map((i) => grid.itemAtOrNull(pos.move(dir.stretch(i)))?.value)
+    .map((i) => grid.itemAtOrNull(pos.move(dir, i))?.value)
     .join("");
 }
