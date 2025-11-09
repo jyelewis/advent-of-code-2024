@@ -4,6 +4,14 @@ export class Direction {
     public dy: number,
   ) {}
 
+  toString() {
+    return `[dx:${this.dx} ; dy: ${this.dy}]`;
+  }
+
+  get key() {
+    return `${this.dx},${this.dy}`;
+  }
+
   static UP = new Direction(0, -1);
   static DOWN = new Direction(0, 1);
   static LEFT = new Direction(-1, 0);

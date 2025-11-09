@@ -2,6 +2,8 @@ import { Position } from "./Position";
 import { range2D } from "./range2D";
 import assert from "node:assert";
 
+// TODO: needs a GridPosition to hold these values more nicely
+
 export class Grid<PosValue = any> {
   public readonly width: number;
   public readonly height: number;
@@ -37,9 +39,5 @@ export class Grid<PosValue = any> {
     }
 
     return new Position(pos.x, pos.y, this.items[pos.y][pos.x]);
-  }
-
-  intForPos(pos: Position): number {
-    return pos.x + pos.y * this.width;
   }
 }
