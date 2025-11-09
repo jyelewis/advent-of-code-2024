@@ -11,7 +11,7 @@ export { sscanf } from "./sscanf";
 
 // new stuff
 export { Position, Direction } from "./Position";
-export { Grid } from "./Grid";
+export { GridPosition, Grid } from "./Grid";
 
 // TODO: remove me once migrated
 export interface IPos {

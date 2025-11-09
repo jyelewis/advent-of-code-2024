@@ -1,4 +1,4 @@
-import { Position, Direction, Grid } from "../utilities";
+import { Position, Direction, Grid, GridPosition } from "../utilities";
 
 export function day10(input: string) {
   const grid = new Grid(
@@ -16,17 +16,17 @@ export function day10(input: string) {
   };
 }
 
-function trailsFrom(grid: Grid<number>, pos: Position, previousValue: number = -1): Position[] {
-  const currentValue = grid.itemAtOrNull(pos);
-  if (currentValue === null || currentValue.value !== previousValue + 1) {
-    return []; // out of bounds or not one step up :(
+function trailsFrom(grid: Grid<number>, pos: GridPosition<number>, previousValue: number = -1): Position[] {
+  if (pos.value !== previousValue + 1) {
+    return []; // not one step up :(
   }
 
-  if (currentValue.value === 9) {
+  if (pos.value === 9) {
     return [pos]; // yay we reached a peek
   }
 
-  return [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT].flatMap((dir) =>
-    trailsFrom(grid, pos.move(dir), currentValue.value),
-  );
+  return [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT]
+    .map((dir) => pos.moveOrNull(dir)) // try to move in the given direction
+    .filter((newPos) => newPos !== null) // bail if out of bounds
+    .flatMap((adjacentPos) => trailsFrom(grid, adjacentPos, pos.value));
 }

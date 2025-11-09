@@ -1,4 +1,4 @@
-import { Grid, Position, Direction } from "../utilities";
+import { Grid, Position, Direction, GridPosition } from "../utilities";
 
 const dirs = [Direction.LEFT, Direction.UP, Direction.RIGHT, Direction.DOWN];
 
@@ -6,7 +6,7 @@ export function day06New(input: string) {
   const grid = new Grid(input.split("\n").map((line) => line.split("")));
   const startingPosition = grid.positions.find(({ value }) => value === "^")!;
 
-  const visitedPositions = evaluateGrid(startingPosition, grid)!;
+  const visitedPositions = evaluateGrid(startingPosition)!;
 
   const partA = visitedPositions.length;
 
@@ -15,10 +15,8 @@ export function day06New(input: string) {
       return false;
     }
 
-    // TODO: non value position
-    const extraWall = new Position(x, y, undefined);
-    const wouldLoop = evaluateGrid(startingPosition, grid, extraWall) === null;
-
+    const extraWall = new Position(x, y);
+    const wouldLoop = evaluateGrid(startingPosition, extraWall) === null;
     return wouldLoop;
   });
 
@@ -29,23 +27,26 @@ export function day06New(input: string) {
 }
 
 // positions until we're out of bounds, or null if we loop forever
-function evaluateGrid(position: Position<string>, grid: Grid<string>, extraWall?: Position): null | Position[] {
+function evaluateGrid(position: GridPosition<string>, extraWall?: Position): null | GridPosition<string>[] {
   let direction = Direction.UP;
 
-  const visitedPositionsSet = new Map<string, Position>(); // unique locations we've been to
+  const visitedPositionsSet = new Map<string, GridPosition<string>>(); // unique locations we've been to
   const visitedPositionsDirectionsSet = new Set<string>(); // unique locations + directions
 
   // run the simulation
   while (true) {
     // mark this item as visited
-    // TODO: API sucks
-    const posWithValue = grid.itemAt(position);
-    visitedPositionsSet.set(posWithValue.key, posWithValue);
-    visitedPositionsDirectionsSet.add(`${posWithValue.key}-${direction.key}`);
+    visitedPositionsSet.set(position.key, position);
+    visitedPositionsDirectionsSet.add(`${position.key}-${direction.key}`);
 
     // now move
-    position = position.move(direction); // TODO: this does not get the correct 'cell' from the grid!
-    const currentTile = grid.itemAtOrNull(position); // this does though - could be one GridCell call
+    const nextPosition = position.moveOrNull(direction);
+    if (nextPosition === null) {
+      // we've escaped, return the positions we've visited
+      // or an empty array if we weren't keeping track
+      return visitedPositionsSet.values().toArray() || [];
+    }
+    position = nextPosition;
 
     const hasVisited = visitedPositionsDirectionsSet.has(`${position.key}-${direction.key}`);
     if (hasVisited) {
@@ -53,13 +54,7 @@ function evaluateGrid(position: Position<string>, grid: Grid<string>, extraWall?
       return null;
     }
 
-    if (currentTile === null) {
-      // we've escaped, return the positions we've visited
-      // or an empty array if we weren't keeping track
-      return visitedPositionsSet.values().toArray() || [];
-    }
-
-    if (currentTile.value === "#" || currentTile.equals(extraWall)) {
+    if (position.value === "#" || position.equals(extraWall)) {
       // we've walked into a wall - take a step backwards then turn
       position = position.move(direction, -1);
 

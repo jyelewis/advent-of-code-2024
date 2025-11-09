@@ -23,16 +23,14 @@ export class Direction {
   static DOWN_RIGHT = new Direction(1, 1);
 }
 
-export class Position<Value = any> {
+export class Position {
   constructor(
     public x: number,
     public y: number,
-    public value: Value,
   ) {}
 
   public move(direction: Direction, steps: number = 1) {
-    // TODO: footgun, within grids would expect this to select another cell
-    return new Position<Value>(this.x + direction.dx * steps, this.y + direction.dy * steps, this.value);
+    return new Position(this.x + direction.dx * steps, this.y + direction.dy * steps) as this;
   }
 
   get key() {
@@ -44,7 +42,7 @@ export class Position<Value = any> {
   }
 
   toString() {
-    return `[x:${this.x}; y:${this.y}; value:${this.value}]`;
+    return `[x:${this.x}; y:${this.y}]`;
   }
 
   // direction step utils

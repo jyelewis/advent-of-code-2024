@@ -22,7 +22,7 @@ function countAntiNodes(grid: Grid<string>, includeHarmonics: boolean) {
           let harmonic = includeHarmonics ? 0 : 1; // only include self if looking for harmonics
           do {
             // rise over run babyeeee
-            const antiNode = new Position(x1 + (x1 - x2) * harmonic, y1 + (y1 - y2) * harmonic, undefined);
+            const antiNode = new Position(x1 + (x1 - x2) * harmonic, y1 + (y1 - y2) * harmonic);
 
             if (!grid.isInBounds(antiNode)) return;
 
