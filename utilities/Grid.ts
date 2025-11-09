@@ -32,6 +32,11 @@ export class GridPosition<PosValue> extends Position {
     return `[x:${this.x}; y:${this.y}; value:${this.value}]`;
   }
 
+  // required for manual downcasting, to remove bounds checks from GridPosition objects
+  toPosition() {
+    return new Position(this.x, this.y);
+  }
+
   // direction step utils
   leftOrNull() {
     return this.moveOrNull(Direction.LEFT);

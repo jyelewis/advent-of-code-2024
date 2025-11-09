@@ -4,6 +4,14 @@ export class Direction {
     public dy: number,
   ) {}
 
+  rotate90CW() {
+    return new Direction(this.dy, -this.dx);
+  }
+
+  rotate90CCW() {
+    return new Direction(-this.dy, this.dx);
+  }
+
   toString() {
     return `[dx:${this.dx} ; dy: ${this.dy}]`;
   }
