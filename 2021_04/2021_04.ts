@@ -1,6 +1,8 @@
 import { parse2DArray, range } from "../utilities";
 import assert from "node:assert";
 
+// TODO: new API for boards
+
 export function day2021_04a(input: string) {
   const [bingoNumbersStr, ...boardStrs] = input.split("\n\n");
   const bingoNumbers = bingoNumbersStr.split(",").map((n) => parseInt(n, 10));

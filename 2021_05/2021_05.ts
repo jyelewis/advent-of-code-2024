@@ -1,5 +1,8 @@
 import { sscanf } from "../utilities";
 
+// TODO: new APIs
+// TODO: do we need a line API? 12 maybe could have used it
+
 export function day2021(input: string) {
   const lines = input.split("\n").map((line) => {
     const [fromX, fromY, toX, toY] = sscanf`${Number},${Number} -> ${Number},${Number}`(line);

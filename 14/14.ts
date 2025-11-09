@@ -2,6 +2,9 @@ import "../utilities";
 import { range, sscanf } from "../utilities";
 import assert from "node:assert";
 
+// TODO: new API needed?
+// TODO: clean up
+
 export function day14a(input: string) {
   const robots = input
     .split("\n")
