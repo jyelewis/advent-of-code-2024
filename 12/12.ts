@@ -1,4 +1,4 @@
-import { Grid, GridPosition, Position } from "../utilities";
+import { Direction, Grid, GridPosition, Position } from "../utilities";
 
 export interface Region {
   plantType: string;
@@ -134,38 +134,38 @@ export function day12(input: string) {
   const grid = new Grid(input.split("\n").map((line) => line.split("")));
 
   // find enclosed regions
-  // TODO: set+arr pattern again, switch to map + entries
+  // each cell can only be consumed into a region once
   const visitedCells = new Set<string>();
-  const regions: Region[] = [];
 
-  // gross, we mutate cells
-  const findRegion = (pos: GridPosition<string>, plantType: string, cells: Position[]) => {
+  const findRegion = (pos: GridPosition<string>, plantType: string): Position[] => {
     // not the right type
     if (pos.value !== plantType) {
-      return;
+      return [];
     }
 
-    // already part of a region
+    // already part of another region
     if (visitedCells.has(pos.key)) {
-      return;
+      return [];
     }
-
     visitedCells.add(pos.key);
-    cells.push(pos);
 
-    pos.downOrNull() && findRegion(pos.down(), plantType, cells);
-    pos.upOrNull() && findRegion(pos.up(), plantType, cells);
-    pos.rightOrNull() && findRegion(pos.right(), plantType, cells);
-    pos.leftOrNull() && findRegion(pos.left(), plantType, cells);
+    return [
+      // this cell, is part of plantType region
+      pos,
+      // and some of our neighbours might be too
+      ...Direction.CARDINAL
+        // find any valid adjacent cardinal directions
+        .mapNotNull((dir) => pos.moveOrNull(dir))
+        // DFS, locate our entire region
+        .flatMap((adjPos) => findRegion(adjPos, plantType)),
+    ];
   };
 
-  grid.positions.forEach((pos) => {
-    const cells: Position[] = [];
-    findRegion(pos, pos.value, cells);
-    if (cells.length > 0) {
-      regions.push({ plantType: pos.value, cells });
-    }
-  });
+  const regions = grid.positions
+    // for each position, try and find a region surrounding that position
+    .map((pos) => ({ plantType: pos.value, cells: findRegion(pos, pos.value) }))
+    // remove any empty regions, typically caused by their region already being captured in a previous cells check
+    .filter((x) => x.cells.length > 0);
 
   return {
     partA: regions.map((r) => r.cells.length * perimeterForRegion(r)).sum(),

@@ -25,8 +25,10 @@ function trailsFrom(grid: Grid<number>, pos: GridPosition<number>, previousValue
     return [pos]; // yay we reached a peek
   }
 
-  return [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT]
-    .map((dir) => pos.moveOrNull(dir)) // try to move in the given direction
-    .filter((newPos) => newPos !== null) // bail if out of bounds
-    .flatMap((adjacentPos) => trailsFrom(grid, adjacentPos, pos.value));
+  return (
+    Direction.CARDINAL
+      // find any valid adjacent cardinal directions
+      .mapNotNull((dir) => pos.moveOrNull(dir))
+      .flatMap((adjacentPos) => trailsFrom(grid, adjacentPos, pos.value))
+  );
 }
