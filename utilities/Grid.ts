@@ -8,9 +8,16 @@ export class GridPosition<PosValue> extends Position {
     public readonly grid: Grid<PosValue>,
     x: number,
     y: number,
-    public readonly value: PosValue,
   ) {
     super(x, y);
+  }
+
+  get value(): PosValue {
+    return this.grid.valueAt(this);
+  }
+
+  set value(value: PosValue) {
+    this.grid.setValue(this, value);
   }
 
   public move(direction: Direction, steps: number = 1) {
@@ -84,7 +91,7 @@ export class Grid<PosValue> {
     const arr: Array<GridPosition<PosValue>> = [];
     for (const y of range(this.height)) {
       for (const x of range(this.width)) {
-        arr.push(new GridPosition(this, x, y, this.items[y][x]));
+        arr.push(new GridPosition(this, x, y));
       }
     }
 
@@ -97,7 +104,16 @@ export class Grid<PosValue> {
 
   itemAt(pos: Position) {
     assert(this.isInBounds(pos), `pos ${pos.toString()} is out of bounds`);
-    return new GridPosition(this, pos.x, pos.y, this.items[pos.y][pos.x]);
+    return new GridPosition(this, pos.x, pos.y);
+  }
+
+  valueAt(pos: Position) {
+    // circular dep if this is a GridPosition (toString prints current value)
+    if (pos instanceof GridPosition) {
+      pos = pos.toPosition();
+    }
+    assert(this.isInBounds(pos), `pos ${pos.toString()} is out of bounds`);
+    return this.items[pos.y][pos.x];
   }
 
   itemAtOrNull(pos: Position) {
@@ -105,6 +121,17 @@ export class Grid<PosValue> {
       return null;
     }
 
-    return new GridPosition(this, pos.x, pos.y, this.items[pos.y][pos.x]);
+    return new GridPosition(this, pos.x, pos.y);
+  }
+
+  setValue(pos: Position, value: PosValue) {
+    assert(this.isInBounds(pos), `pos ${pos.toString()} is out of bounds`);
+    this.items[pos.y][pos.x] = value;
+  }
+
+  print() {
+    for (const row of this.items) {
+      console.log(row.join(""));
+    }
   }
 }
