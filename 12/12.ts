@@ -1,13 +1,8 @@
-import { IPos, range2D } from "../utilities";
+import { Grid, GridPosition, Position } from "../utilities";
 
 export interface Region {
   plantType: string;
-  cells: IPos[];
-}
-
-// TODO: move this to Position class
-function isAdjacent(a: IPos, b: IPos) {
-  return Math.abs(a.x - b.x) + Math.abs(a.y - b.y) === 1;
+  cells: Position[];
 }
 
 function perimeterForRegion(region: Region) {
@@ -20,7 +15,7 @@ function perimeterForRegion(region: Region) {
 
   return region.cells
     .map((cell) => {
-      const neighbors = region.cells.filter((other) => isAdjacent(cell, other));
+      const neighbors = region.cells.filter((other) => cell.isAdjacentTo(other));
       return 4 - neighbors.length;
     })
     .sum();
@@ -40,6 +35,7 @@ export function sidesForRegion(region: Region) {
         yEnd: number;
       }> = [];
 
+      // TODO: gotta be a better way to use new APIs here
       const directions = [
         {
           side: "top",
@@ -135,43 +131,39 @@ export function sidesForRegion(region: Region) {
 }
 
 export function day12(input: string) {
-  const grid = input.split("\n").map((line) => line.split(""));
+  const grid = new Grid(input.split("\n").map((line) => line.split("")));
 
   // find enclosed regions
+  // TODO: set+arr pattern again, switch to map + entries
   const visitedCells = new Set<string>();
   const regions: Region[] = [];
 
   // gross, we mutate cells
-  const findRegion = (x: number, y: number, plantType: string, cells: IPos[]) => {
-    // out of bounds
-    if (x < 0 || y < 0 || x >= grid[0].length || y >= grid.length) {
-      return;
-    }
-
+  const findRegion = (pos: GridPosition<string>, plantType: string, cells: Position[]) => {
     // not the right type
-    if (grid[y][x] !== plantType) {
+    if (pos.value !== plantType) {
       return;
     }
 
     // already part of a region
-    if (visitedCells.has(`${x},${y}`)) {
+    if (visitedCells.has(pos.key)) {
       return;
     }
 
-    visitedCells.add(`${x},${y}`);
-    cells.push({ x, y });
+    visitedCells.add(pos.key);
+    cells.push(pos);
 
-    findRegion(x + 1, y, plantType, cells);
-    findRegion(x - 1, y, plantType, cells);
-    findRegion(x, y + 1, plantType, cells);
-    findRegion(x, y - 1, plantType, cells);
+    pos.downOrNull() && findRegion(pos.down(), plantType, cells);
+    pos.upOrNull() && findRegion(pos.up(), plantType, cells);
+    pos.rightOrNull() && findRegion(pos.right(), plantType, cells);
+    pos.leftOrNull() && findRegion(pos.left(), plantType, cells);
   };
 
-  range2D(grid).forEach(({ x, y, value: plantType }) => {
-    const cells: IPos[] = [];
-    findRegion(x, y, plantType, cells);
+  grid.positions.forEach((pos) => {
+    const cells: Position[] = [];
+    findRegion(pos, pos.value, cells);
     if (cells.length > 0) {
-      regions.push({ plantType, cells });
+      regions.push({ plantType: pos.value, cells });
     }
   });
 

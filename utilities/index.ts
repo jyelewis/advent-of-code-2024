@@ -10,11 +10,6 @@ export { time } from "./time";
 export { sscanf } from "./sscanf";
 
 // new stuff
-export { Position, Direction } from "./Position";
+export { Position } from "./Position";
+export { Direction } from "./Direction";
 export { GridPosition, Grid } from "./Grid";
-
-// TODO: remove me once migrated
-export interface IPos {
-  x: number;
-  y: number;
-}

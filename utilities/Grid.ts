@@ -1,6 +1,7 @@
-import { Direction, Position } from "./Position";
+import { Position } from "./Position";
 import assert from "node:assert";
 import { range } from "./range";
+import { Direction } from "./Direction";
 
 export class GridPosition<PosValue> extends Position {
   constructor(

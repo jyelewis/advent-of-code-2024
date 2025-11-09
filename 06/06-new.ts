@@ -1,5 +1,7 @@
 import { Grid, Position, Direction, GridPosition } from "../utilities";
 
+// TODO: could use small optimisations, then make this the primary implementation
+
 const dirs = [Direction.LEFT, Direction.UP, Direction.RIGHT, Direction.DOWN];
 
 export function day06New(input: string) {

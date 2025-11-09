@@ -1,27 +1,4 @@
-export class Direction {
-  constructor(
-    public dx: number,
-    public dy: number,
-  ) {}
-
-  toString() {
-    return `[dx:${this.dx} ; dy: ${this.dy}]`;
-  }
-
-  get key() {
-    return `${this.dx},${this.dy}`;
-  }
-
-  static UP = new Direction(0, -1);
-  static DOWN = new Direction(0, 1);
-  static LEFT = new Direction(-1, 0);
-  static RIGHT = new Direction(1, 0);
-
-  static UP_LEFT = new Direction(-1, -1);
-  static UP_RIGHT = new Direction(-1, 1);
-  static DOWN_LEFT = new Direction(1, -1);
-  static DOWN_RIGHT = new Direction(1, 1);
-}
+import { Direction } from "./Direction";
 
 export class Position {
   constructor(
@@ -43,6 +20,10 @@ export class Position {
 
   toString() {
     return `[x:${this.x}; y:${this.y}]`;
+  }
+
+  isAdjacentTo(otherPos: Position) {
+    return Math.abs(this.x - otherPos.x) + Math.abs(this.y - otherPos.y) === 1;
   }
 
   // direction step utils
