@@ -1,6 +1,5 @@
 import { Grid, Position, Direction } from "../utilities";
 
-// TODO: part b aint working
 // TODO: don't love this hashing stuff, wonder if there is a better way
 
 const dirs = [Direction.LEFT, Direction.UP, Direction.RIGHT, Direction.DOWN];

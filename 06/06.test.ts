@@ -27,8 +27,7 @@ describe("day06", () => {
     assert.equal(partB, 1719);
   });
 
-  // TODO: failing
-  it.skip("06-new input", () => {
+  it("06-new input", () => {
     const { partA, partB } = day06New(input);
     assert.equal(partA, 4752);
     assert.equal(partB, 1719);

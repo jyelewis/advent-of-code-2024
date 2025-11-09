@@ -7,8 +7,15 @@ export class Grid<PosValue = any> {
   public readonly height: number;
   constructor(public readonly items: PosValue[][]) {
     assert(items.length > 0, "items must be non empty");
+
     this.width = items[0].length;
     this.height = items.length;
+
+    // validate every sub-array is the same size
+    assert(
+      items.every((row) => row.length === this.width),
+      "Inconsistent row sizes",
+    );
   }
 
   get positions(): Position<PosValue>[] {
