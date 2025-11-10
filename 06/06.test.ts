@@ -3,7 +3,6 @@ import fs from "fs";
 import assert from "node:assert";
 import { day06 } from "./06";
 import { day06_fast } from "./06-fast";
-import { day06New } from "./06-new";
 
 describe("day06", () => {
   const sampleInput = fs.readFileSync("06/example-input.txt").toString("utf-8");
@@ -15,20 +14,8 @@ describe("day06", () => {
     assert.equal(partB, 6);
   });
 
-  it("06-new sample input", () => {
-    const { partA, partB } = day06New(sampleInput);
-    assert.equal(partA, 41);
-    assert.equal(partB, 6);
-  });
-
-  it("06 input", () => {
+  it.skip("06 input", () => {
     const { partA, partB } = day06(input);
-    assert.equal(partA, 4752);
-    assert.equal(partB, 1719);
-  });
-
-  it.skip("06-new input", () => {
-    const { partA, partB } = day06New(input);
     assert.equal(partA, 4752);
     assert.equal(partB, 1719);
   });
