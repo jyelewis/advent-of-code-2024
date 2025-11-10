@@ -13,17 +13,9 @@ export class Direction {
   }
 
   toString() {
-    if (this.equals(Direction.UP)) {
-      return "[^]";
-    }
-    if (this.equals(Direction.DOWN)) {
-      return "[v]";
-    }
-    if (this.equals(Direction.LEFT)) {
-      return "[<]";
-    }
-    if (this.equals(Direction.RIGHT)) {
-      return "[>]";
+    const char = this.toChar();
+    if (char !== "?") {
+      return `[${char}]`;
     }
 
     return `[dx:${this.dx} ; dy: ${this.dy}]`;
@@ -49,6 +41,20 @@ export class Direction {
         return Direction.RIGHT;
       default:
         throw new Error(`Unknown direction character: ${directionChar}`);
+    }
+  }
+  toChar() {
+    switch (true) {
+      case this.equals(Direction.UP):
+        return "^";
+      case this.equals(Direction.DOWN):
+        return "v";
+      case this.equals(Direction.LEFT):
+        return "<";
+      case this.equals(Direction.RIGHT):
+        return ">";
+      default:
+        return "?";
     }
   }
 
