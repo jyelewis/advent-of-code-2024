@@ -9,7 +9,7 @@ describe("day15", () => {
 
   it("15a sample input", () => {
     const answer = day15a(sampleInput);
-    assert.equal(answer, 2028);
+    assert.equal(answer, 10092);
   });
 
   it("15a input", () => {
@@ -19,11 +19,11 @@ describe("day15", () => {
 
   it("15b sample input", () => {
     const answer = day15b(sampleInput);
-    assert.equal(answer, 123);
+    assert.equal(answer, 9021);
   });
 
   it("15b input", () => {
     const answer = day15b(input);
-    assert.equal(answer, 123);
+    assert.equal(answer, 1397393);
   });
 });

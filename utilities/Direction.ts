@@ -13,6 +13,19 @@ export class Direction {
   }
 
   toString() {
+    if (this.equals(Direction.UP)) {
+      return "[^]";
+    }
+    if (this.equals(Direction.DOWN)) {
+      return "[v]";
+    }
+    if (this.equals(Direction.LEFT)) {
+      return "[<]";
+    }
+    if (this.equals(Direction.RIGHT)) {
+      return "[>]";
+    }
+
     return `[dx:${this.dx} ; dy: ${this.dy}]`;
   }
 
@@ -20,10 +33,34 @@ export class Direction {
     return `${this.dx},${this.dy}`;
   }
 
+  equals(other: Direction) {
+    return this.dx === other.dx && this.dy === other.dy;
+  }
+
+  static fromChar(directionChar: string): Direction {
+    switch (directionChar) {
+      case "^":
+        return Direction.UP;
+      case "v":
+        return Direction.DOWN;
+      case "<":
+        return Direction.LEFT;
+      case ">":
+        return Direction.RIGHT;
+      default:
+        throw new Error(`Unknown direction character: ${directionChar}`);
+    }
+  }
+
   static UP = new Direction(0, -1);
   static DOWN = new Direction(0, 1);
   static LEFT = new Direction(-1, 0);
   static RIGHT = new Direction(1, 0);
+
+  static NORTH = new Direction(0, -1);
+  static SOUTH = new Direction(0, 1);
+  static WEST = new Direction(-1, 0);
+  static EAST = new Direction(1, 0);
 
   static UP_LEFT = new Direction(-1, -1);
   static UP_RIGHT = new Direction(-1, 1);
