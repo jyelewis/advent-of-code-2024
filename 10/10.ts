@@ -11,7 +11,7 @@ export function day10(input: string) {
   const trailheadPeaks = grid.positions.filter(({ value }) => value === 0).map((pos) => trailsFrom(grid, pos));
 
   return {
-    partA: trailheadPeaks.map((peaks) => peaks.dedup().length).sum(),
+    partA: trailheadPeaks.map((peaks) => peaks.unique().length).sum(),
     partB: trailheadPeaks.map((peaks) => peaks.length).sum(),
   };
 }

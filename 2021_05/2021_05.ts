@@ -38,7 +38,7 @@ export function day2021(input: string) {
 
         return cells;
       })
-      .dedup(({ x, y }) => `${x},${y}`)
+      .unique(({ x, y }) => `${x},${y}`)
       // count which unique cells have 2 or more lines crossing them
       .count(
         (cell) =>

@@ -3,11 +3,11 @@ import assert from "node:assert";
 
 declare global {
   interface Array<T> {
-    dedup(fn?: (item: T) => string): Array<T>;
+    unique(fn?: (item: T) => string): Array<T>;
   }
 }
 
-Array.prototype.dedup = function (fn?: (item: any) => string): Array<any> {
+Array.prototype.unique = function (fn?: (item: any) => string): Array<any> {
   if (!fn) {
     fn = (item: any) => item.key;
   }

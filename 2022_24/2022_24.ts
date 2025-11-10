@@ -62,7 +62,7 @@ export function day2022(input: string) {
               .filter((pos) => grid.isInBounds(pos) && grid.valueAt(pos) !== "#"),
           ];
         })
-        .dedup();
+        .unique();
     }
 
     return minutes;

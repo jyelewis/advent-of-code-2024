@@ -13,9 +13,7 @@ describe("day09", () => {
   });
 
   it("09a input", () => {
-    console.time("09a");
     const answer = day09a(input);
-    console.timeEnd("09a");
     assert.equal(answer, 6241633730082);
   });
 

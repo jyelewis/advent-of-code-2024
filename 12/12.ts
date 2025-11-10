@@ -122,5 +122,5 @@ export function sidesForRegion(region: Region) {
 
       return cellWalls;
     })
-    .dedup(({ side, start, end }) => `${side}-${start.key},${end.key}`).length;
+    .unique(({ side, start, end }) => `${side}-${start.key},${end.key}`).length;
 }

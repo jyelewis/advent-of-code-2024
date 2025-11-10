@@ -69,7 +69,7 @@ export function day16(input: string) {
   const uniqueCells = pathsToEnd
     .filter((p) => p.cost === shortestCost)
     .flatMap((p) => p.path)
-    .dedup();
+    .unique();
 
   return {
     partA: shortestCost,
