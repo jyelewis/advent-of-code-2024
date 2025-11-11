@@ -1,0 +1,476 @@
+import { range, sscanf } from "../utilities";
+import assert from "node:assert";
+
+// lots of iteration to work out the solution here, leaving this scratchpad file for reference
+// as the solution file makes many assumptions which were discovered/validated here
+
+export function day17a(input: string) {
+  let [regA, regB, regC, instructionSeqString] = sscanf`Register A: ${Number}
+Register B: ${Number}
+Register C: ${Number}
+
+Program: ${String}`(input);
+  assert(regB === 0);
+  assert(regC === 0);
+
+  const outputs = runProgram(
+    regA,
+    instructionSeqString.split(",").map((s: string) => parseInt(s, 10)),
+  );
+
+  return outputs.join(",");
+}
+
+export function day17b(input: string) {
+  let [regA, regB, regC, instructionSeqString] = sscanf`Register A: ${Number}
+Register B: ${Number}
+Register C: ${Number}
+
+Program: ${String}`(input);
+  assert(regB === 0);
+  assert(regC === 0);
+  const instructions = instructionSeqString.split(",").map((s: string) => parseInt(s, 10));
+
+  // regA = 0;
+  // regA = 2735000000;
+  // regA = 281_474_976_710_656;
+  regA = 250_474_976_710_656;
+  while (true) {
+    if (regA % 1_000_00 === 0) {
+      console.log(`Trying regA=${regA}`);
+    }
+    // const outputs = runProgram(regA, instructions);
+    const outputs = runJit(regA);
+    if (regA % 1_000_00 === 0) {
+      console.log(`Outputs for regA=${regA}: ${outputs.join(",")}`);
+    }
+    // if (outputs.length > 12) {
+    //   console.log(`Outputs length ${outputs.length} for regA=${regA} ${outputs}`);
+    // }
+    if (fastArrCmp(outputs, instructions)) {
+      return regA;
+    }
+
+    regA += 1;
+  }
+}
+
+function fastArrCmp(a1: number[], a2: number[]): boolean {
+  if (a1.length !== a2.length) {
+    return false;
+  }
+  for (let i = 0; i < a1.length; i++) {
+    if (a1[i] !== a2[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function runProgram(regA: number, instructions: number[]): number[] {
+  let regB = 0;
+  let regC = 0;
+  let instructionPointer = 0;
+  const outputs: number[] = [];
+
+  while (instructionPointer >= 0 && instructionPointer < instructions.length) {
+    const instruction = instructions[instructionPointer];
+    const literalOperand = instructions[instructionPointer + 1];
+
+    // Combo operands 0 through 3 represent literal values 0 through 3.
+    // Combo operand 4 represents the value of register A.
+    // Combo operand 5 represents the value of register B.
+    // Combo operand 6 represents the value of register C.
+    // Combo operand 7 is reserved and will not appear in valid programs.
+    let comboOperand = 0;
+    switch (literalOperand) {
+      case 0:
+      case 1:
+      case 2:
+      case 3:
+        comboOperand = literalOperand;
+        break;
+      case 4:
+        comboOperand = regA;
+        break;
+      case 5:
+        comboOperand = regB;
+        break;
+      case 6:
+        comboOperand = regC;
+        break;
+    }
+
+    switch (instruction) {
+      case 0: {
+        // The adv instruction (opcode 0) performs division. The numerator is the value in the A register.
+        // The denominator is found by raising 2 to the power of the instruction's combo operand.
+        // (So, an operand of 2 would divide A by 4 (2^2); an operand of 5 would divide A by 2^B.)
+        // The result of the division operation is truncated to an integer and then written to the A register
+
+        const numerator = regA;
+        const denominator = 2 ** comboOperand;
+        regA = Math.floor(numerator / denominator);
+        break;
+      }
+      case 1: {
+        // The bxl instruction (opcode 1) calculates the bitwise XOR of register B and the instruction's literal operand, then stores the result in register B.
+        regB = regB ^ literalOperand;
+        break;
+      }
+      case 2: {
+        // The bst instruction (opcode 2) calculates the value of its combo operand modulo 8 (thereby keeping only its lowest 3 bits), then writes that value to the B register.
+        regB = comboOperand % 8;
+        break;
+      }
+      case 3: {
+        // The jnz instruction (opcode 3) does nothing if the A register is 0. However, if the A register is not zero, it jumps by setting the instruction pointer to the value of its literal operand; if this instruction jumps, the instruction pointer is not increased by 2 after this instruction.
+        if (regA !== 0) {
+          instructionPointer = literalOperand;
+          continue;
+        }
+        break;
+      }
+      case 4: {
+        // The bxc instruction (opcode 4) calculates the bitwise XOR of register B and register C, then stores the result in register B.
+        // (For legacy reasons, this instruction reads an operand but ignores it.)
+        regB = regB ^ regC;
+        break;
+      }
+      case 5: {
+        // The out instruction (opcode 5) calculates the value of its combo operand modulo 8, then outputs that value.
+        // (If a program outputs multiple values, they are separated by commas.)
+        outputs.push(comboOperand % 8);
+      }
+      case 6: {
+        // The bdv instruction (opcode 6) works exactly like the adv instruction except that the result is stored in the B register.
+        // (The numerator is still read from the A register.)
+        const numerator = regA;
+        const denominator = 2 ** comboOperand;
+        regB = Math.floor(numerator / denominator);
+        break;
+      }
+      case 7: {
+        // The cdv instruction (opcode 7) works exactly like the adv instruction except that the result is stored in the C register.
+        // (The numerator is still read from the A register.)
+        const numerator = regA;
+        const denominator = 2 ** comboOperand;
+        regC = Math.floor(numerator / denominator);
+        break;
+      }
+      default:
+        assert.fail(`Unknown instruction code: ${instruction}`);
+    }
+
+    instructionPointer += 2;
+  }
+
+  return outputs;
+}
+
+// -----
+export function runJit(regA: number): number[] {
+  const output = [];
+  let regB = 0;
+  let regC = 0;
+
+  // Program:
+  //  2,4
+  //  1,1
+  //  7,5
+  //  1,5
+  //  4,5
+  //  0,3
+  //  5,5
+  //  3,0
+
+  do {
+    // 2, 4
+    regB = regA % 8;
+
+    //  1,1
+    regB = regB ^ 1;
+
+    //  7,5
+    regC = Math.floor(regA / 2 ** regB);
+
+    //  1,5
+    regB = regB ^ 5;
+
+    //  4,5
+    regB = regB ^ regC;
+
+    //  0,3
+    regA = Math.floor(regA / 8);
+
+    //  5,5
+    output.push(regB % 8);
+
+    //  3,0 (jump back to the start if A !== 0)
+  } while (regA !== 0);
+
+  return output;
+}
+
+function myProgJitO3(regA: number) {
+  const output = [];
+  let regB = 0;
+  let regC = 0;
+
+  // constraints
+  // regA must be greater than 6^15 to get all 16 outputs needed
+
+  do {
+    const f = regA % 8; // 1, 2, 3, 4, 5, 6, 7, 8 ...
+    const e = f ^ 1;
+    const d = Math.floor(regA / 2 ** e); // ???
+    const c = e ^ 5; // 32, 243, 1024, 3125, 7776, 16807, 32768, 59049 ...
+    const b = c ^ d;
+    const a = b % 8;
+    output.push(a); // need '2'
+
+    regA = Math.floor(regA / 8); // regA must remain above 8
+  } while (regA !== 0);
+
+  // need 16 numbers
+  // regA must start high enough to produce 16 outputs before hitting 0
+  // 8*8*8*8*8*8*8*8*8*8*8
+
+  // 8^16 = 281,474,976,710,656 (lower bound)
+
+  // Program: 2,4,1,1,7,5,1,5,4,5,0,3,5,5,3,0
+  // 2:
+  regB = 2;
+}
+
+function attempt3() {
+  let regA = 0;
+  const output = [];
+
+  do {
+    const b = regA % 8 ^ 1 ^ 5 ^ Math.floor(regA / 2 ** (regA % 8 ^ 1));
+    const a = b % 8;
+    output.push(a); // need '2'
+
+    regA = Math.floor(regA / 8); // regA must remain above 8
+  } while (regA !== 0);
+}
+
+function attempt4() {
+  // goal is to get a '2' out first
+  let regA = 0;
+  let regB = 0;
+  let regC = 0;
+  const output = [];
+
+  // assuming regA is 1-8 (discard first mod)
+  regC = Math.floor(regA / 2 ** (regA ^ 1)); // 7,5 (+1,1)
+  regB = regA ^ regC; // invert 4,5
+  regB = regB ^ 5; // invert 1,5
+  regB = regB ^ 1; // invert 1,1
+
+  do {
+    // 2, 4
+    regB = regA % 8;
+
+    //  1,1
+    regB = regB ^ 1;
+
+    //  7,5
+    regC = Math.floor(regA / 2 ** regB);
+
+    //  1,5
+    regB = regB ^ 5;
+
+    //  4,5
+    regB = regB ^ regC;
+
+    //  0,3
+    regA = Math.floor(regA / 8);
+
+    //  5,5
+    output.push(regB % 8);
+
+    //  3,0 (jump back to the start if A !== 0)
+  } while (regA !== 0);
+}
+
+export function attempt5(regA: number) {
+  // goal is to get a '2' out first
+  let regB = 0;
+  let regC = 0;
+  const output = [];
+
+  const inspection: { regA: number; regB: number; regC: number }[] = [];
+  const inspectPoint = (i: number) => {
+    console.log(i, { regA, regB, regC });
+    inspection[i] = { regA, regB, regC };
+  };
+
+  do {
+    inspectPoint(1);
+
+    // 2, 4
+    // bit mask
+    // regB = regA % 8;
+    regB = regA & 0b000111;
+    const these3Bits = regA & 0b000111;
+
+    inspectPoint(2);
+
+    //  1,1
+    regB = regB ^ 0b00001;
+    const these3BitsFlip1 = these3Bits ^ 0b0001;
+
+    inspectPoint(3);
+
+    //  7,5
+    // regC = Math.floor(regA / 2 ** regB);
+    // another bit shift?
+    regC = regA >> regB;
+
+    inspectPoint(4);
+
+    //  1,5
+    // regB = regB ^ 5;
+    regB = regB ^ 0b000101;
+
+    inspectPoint(5);
+
+    //  4,5
+    regB = regB ^ regC;
+
+    inspectPoint(6);
+
+    //  0,3
+    // regA = Math.floor(regA / 8);
+    regA = regA >> 3;
+
+    inspectPoint(7);
+
+    //  5,5
+    output.push(regB % 8);
+    console.log("OUTPUT", regB % 8);
+
+    //  3,0 (jump back to the start if A !== 0)
+  } while (regA !== 0);
+
+  return { inspection, output };
+}
+
+export function attempt6(input: number) {
+  // goal is to get a '2' out first
+  const output = [];
+
+  // TODO: ah! there is actually no state here, just 3 bit chunks
+  // could we map 3 bits to their output value, then just process input 3 bits at a time?
+  do {
+    // 2, 4
+    // bit mask
+    // regB = regA % 8;
+    const these3Bits = input & 0b000111;
+
+    //  1,1
+    const these3BitsFlip1 = these3Bits ^ 0b0001;
+
+    //  1,5
+    // regB = regB ^ 5;
+    const these3BitsFlip2 = these3Bits ^ 0b000100;
+
+    //  4,5
+    // console.log("these3BitsFlip1", these3BitsFlip1);
+    // TODO: gotta understand this bit
+    const regC_WOT = input >> these3BitsFlip1;
+    const nonRoundedOutputValue = these3BitsFlip2 ^ regC_WOT;
+
+    //  0,3
+    // trim these 3 bits off input
+    input = input >> 3;
+
+    //  5,5
+    output.push(nonRoundedOutputValue % 8);
+    // console.log("OUTPUT", nonRoundedOutputValue % 8, these3Bits);
+
+    //  3,0 (jump back to the start if A !== 0)
+  } while (input !== 0);
+
+  return { output };
+}
+
+export function attempt6_bigint(input: bigint) {
+  // goal is to get a '2' out first
+  const output = [];
+
+  // TODO: ah! there is actually no state here, just 3 bit chunks
+  // could we map 3 bits to their output value, then just process input 3 bits at a time?
+  do {
+    // 2, 4
+    // bit mask
+    // regB = regA % 8;
+    const these3Bits = input & 0b000111n;
+
+    //  1,1
+    const these3BitsFlip1 = these3Bits ^ 0b0001n;
+
+    //  1,5
+    // regB = regB ^ 5;
+    const these3BitsFlip2 = these3Bits ^ 0b000100n;
+
+    //  4,5
+    // console.log("these3BitsFlip1", these3BitsFlip1);
+    // TODO: gotta understand this bit
+    const regC_WOT = input >> these3BitsFlip1;
+    const nonRoundedOutputValue = these3BitsFlip2 ^ regC_WOT;
+
+    //  0,3
+    // trim these 3 bits off input
+    input = input >> 3n;
+
+    //  5,5
+    output.push(nonRoundedOutputValue % 8n);
+    // console.log("OUTPUT", nonRoundedOutputValue % 8, these3Bits);
+
+    //  3,0 (jump back to the start if A !== 0)
+  } while (input !== 0n);
+
+  return { output };
+}
+
+export function partB(input: string) {
+  let [_regA, regB, regC, instructionSeqString] = sscanf`Register A: ${Number}
+Register B: ${Number}
+Register C: ${Number}
+
+Program: ${String}`(input);
+  assert(regB === 0);
+  assert(regC === 0);
+
+  const instructions = instructionSeqString.split(",").map((s: string) => parseInt(s, 10)) as number[];
+
+  let regA = 0n;
+  for (const numOutputs of range(instructions.length)) {
+    const targetOutput = instructions.slice(instructions.length - numOutputs - 1);
+
+    for (const i of range(8)) {
+      // const output = runProgram(regA, instructions);
+      // const { output } = attempt6(Number(regA));
+      const { output } = attempt6_bigint(regA);
+      console.log(1111, regA, output, targetOutput);
+      // if (fastArrCmp(output, targetOutput)) {
+      if (output.join(",") === targetOutput.join(",")) {
+        console.log(2222, regA, output, targetOutput);
+        // TODO: we're doing one div 8 more than we should be
+        regA *= 8n;
+        break; // we've found this output, onto the next out
+      }
+      regA += 1n;
+      if (i === 8 - 1) {
+        assert(false, `never found target output :(`);
+      }
+    }
+    // regA *= 8;
+    // assert(false, "never found target output :(");
+  }
+
+  return regA / 8n; // TODO: hax
+}
