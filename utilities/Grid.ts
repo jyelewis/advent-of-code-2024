@@ -87,6 +87,19 @@ export class Grid<PosValue> {
     );
   }
 
+  static fromSize<PosValue>(width: number, height: number, defaultValue: PosValue) {
+    const items: PosValue[][] = [];
+    for (let y = 0; y < height; y++) {
+      const row: PosValue[] = [];
+      for (let x = 0; x < width; x++) {
+        row.push(defaultValue);
+      }
+      items.push(row);
+    }
+
+    return new Grid(items);
+  }
+
   get positions(): GridPosition<PosValue>[] {
     const arr: Array<GridPosition<PosValue>> = [];
     for (const y of range(this.height)) {

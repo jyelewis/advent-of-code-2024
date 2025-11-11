@@ -16,7 +16,7 @@ Array.prototype.unique = function (fn?: (item: any) => string): Array<any> {
 
   return this.filter((item: any) => {
     const itemKey = fn(item);
-    assert(itemKey, "dedup requires a key function");
+    assert(itemKey, "unique requires a key function");
 
     if (seenItems.has(itemKey)) {
       return false;
