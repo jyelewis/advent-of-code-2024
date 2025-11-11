@@ -45,7 +45,7 @@ export async function main() {
       Cookie: `session=${process.env.AOC_SESSION_TOKEN}`,
     },
   });
-  fs.writeFileSync(`${dayString}/input.txt`, await input.text());
+  fs.writeFileSync(`${dayString}/input.txt`, (await input.text()).trimEnd());
 
   // open files in editor
   exec(`idea ${dayString}/${dayString}.ts`);
