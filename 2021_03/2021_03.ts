@@ -2,7 +2,7 @@ import { range } from "../utilities";
 import assert from "node:assert";
 
 export function day2021_03a(input: string) {
-  const binaryNumbers = input.split("\n");
+  const binaryNumbers = input.lines();
 
   const gammaBits = [];
   const epsilonBits = [];
@@ -22,7 +22,7 @@ export function day2021_03a(input: string) {
 }
 
 export function day2021_03b(input: string) {
-  const binaryNumbers = input.split("\n");
+  const binaryNumbers = input.lines();
 
   const oxygenGeneratorRating = extractEquipmentRating(binaryNumbers, "MOST_COMMON_BIT");
   const co2ScrubberRating = extractEquipmentRating(binaryNumbers, "LEAST_COMMON_BIT");

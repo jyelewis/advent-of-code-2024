@@ -1,7 +1,7 @@
 import { Grid, Position, Direction, GridPosition } from "../utilities";
 
 export function day06(input: string) {
-  const grid = new Grid(input.split("\n").map((line) => line.split("")));
+  const grid = Grid.fromString(input);
   const startingPosition = grid.positions.find(({ value }) => value === "^")!;
 
   const visitedPositions = evaluateGrid(startingPosition)!;

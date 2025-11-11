@@ -1,8 +1,6 @@
 // global augmentations
-import "./sum";
-import "./count";
-import "./unique";
-import "./mapNotNull";
+import "./stringExtensions";
+import "./arrayExtensions";
 
 // legacy, do not keep for 2025
 import "./legacy/inc";

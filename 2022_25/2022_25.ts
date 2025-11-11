@@ -1,12 +1,12 @@
 import "../utilities";
 
 export function day2022_25(input: string) {
-  return decToSnaffu(input.split("\n").map(snaffuToDec).sum());
+  return decToSnaffu(input.lines().map(snaffuToDec).sum());
 }
 
 export function snaffuToDec(s: string): number {
   return s
-    .split("")
+    .chars()
     .reverse() // work from right to left
     .map(
       (snaffuDigit) =>

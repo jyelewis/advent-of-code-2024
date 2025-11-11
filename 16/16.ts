@@ -2,7 +2,7 @@ import { Direction, Grid, GridPosition } from "../utilities";
 import assert from "node:assert";
 
 export function day16(input: string) {
-  const grid = new Grid(input.split("\n").map((line) => line.split("")));
+  const grid = Grid.fromString(input);
 
   const startPos = grid.positions.find((pos) => pos.value === "S");
   assert(startPos, "startPos not found");

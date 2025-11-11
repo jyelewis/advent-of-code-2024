@@ -4,10 +4,10 @@ import assert from "node:assert";
 export function day15a(input: string) {
   // ---------------- parse input ----------------
   const [gridStr, directionLines] = input.split("\n\n");
-  const grid = new Grid(gridStr.split("\n").map((line) => line.split("")));
+  const grid = Grid.fromString(gridStr);
 
   const directions = directionLines
-    .split("")
+    .chars()
     .filter((c) => c !== "\n")
     .map((directionChar) => Direction.fromChar(directionChar));
 
@@ -34,19 +34,19 @@ export function day15b(input: string) {
   // ---------------- parse input ----------------
   const [gridStr, directionLines] = input.split("\n\n");
   const grid = new Grid(
-    gridStr.split("\n").map((line) =>
+    gridStr.lines().map((line) =>
       line
         // the factory must grow
         .replaceAll("#", "##")
         .replaceAll(".", "..")
         .replaceAll("@", "@.")
         .replaceAll("O", "[]")
-        .split(""),
+        .chars(),
     ),
   );
 
   const directions = directionLines
-    .split("")
+    .chars()
     .filter((c) => c !== "\n")
     .map((directionChar) => Direction.fromChar(directionChar));
 

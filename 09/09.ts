@@ -3,7 +3,7 @@ import "../utilities";
 // pretty gross, but its fast
 export function day09a(input: string) {
   const expanded = input
-    .split("")
+    .chars()
     .map((c) => parseInt(c, 10))
     .flatMap((size, i) => {
       const isFreeSpace = i % 2 === 1;
@@ -43,7 +43,7 @@ export function day09a(input: string) {
 // totally different approach for partb, preserve the original compact format rather than expanding
 export function day09b(input: string) {
   // parse input into chunks files & free space
-  const disk = input.split("").map((c, i) => ({
+  const disk = input.chars().map((c, i) => ({
     fileId: i % 2 === 1 ? null : i / 2,
     size: parseInt(c, 10),
   }));

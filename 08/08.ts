@@ -1,7 +1,7 @@
 import { Position, Grid } from "../utilities";
 
 export function day08(input: string) {
-  const grid = new Grid(input.split("\n").map((line) => line.split("")));
+  const grid = Grid.fromString(input);
 
   return {
     partA: countAntiNodes(grid, false),

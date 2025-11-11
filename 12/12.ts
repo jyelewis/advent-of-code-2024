@@ -6,7 +6,7 @@ export interface Region {
 }
 
 export function day12(input: string) {
-  const grid = new Grid(input.split("\n").map((line) => line.split("")));
+  const grid = Grid.fromString(input);
 
   // find enclosed regions
   // each cell can only be consumed into a region once

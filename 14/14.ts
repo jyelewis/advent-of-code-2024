@@ -7,7 +7,7 @@ import assert from "node:assert";
 
 export function day14a(input: string) {
   const robots = input
-    .split("\n")
+    .lines()
     .map(sscanf`p=${Number},${Number} v=${Number},${Number}`)
     .map(([px, py, vx, vy]) => ({ px, py, vx, vy }));
 
@@ -84,7 +84,7 @@ export function day14a(input: string) {
 
 export function day14b(input: string) {
   const robots = input
-    .split("\n")
+    .lines()
     .map(sscanf`p=${Number},${Number} v=${Number},${Number}`)
     .map(([px, py, vx, vy]) => ({ px, py, vx, vy }));
 

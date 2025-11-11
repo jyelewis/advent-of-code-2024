@@ -100,6 +100,10 @@ export class Grid<PosValue> {
     return new Grid(items);
   }
 
+  static fromString(input: string) {
+    return new Grid(input.lines().map((line) => line.chars()));
+  }
+
   get positions(): GridPosition<PosValue>[] {
     const arr: Array<GridPosition<PosValue>> = [];
     for (const y of range(this.height)) {

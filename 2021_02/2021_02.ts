@@ -4,7 +4,7 @@ export function day2021_02a(input: string) {
   let horzPosition = 0;
   let depth = 0;
 
-  input.split("\n").forEach((line) => {
+  input.lines().forEach((line) => {
     const [command, value] = sscanf`${String} ${Number}`(line);
 
     switch (command) {
@@ -28,7 +28,7 @@ export function day2021_02b(input: string) {
   let depth = 0;
   let aim = 0;
 
-  input.split("\n").forEach((line) => {
+  input.lines().forEach((line) => {
     const [command, value] = sscanf`${String} ${Number}`(line);
 
     switch (command) {

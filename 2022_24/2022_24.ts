@@ -1,7 +1,7 @@
 import { Direction, Grid, Position } from "../utilities";
 
 export function day2022(input: string) {
-  const grid = new Grid<string>(input.split("\n").map((line) => line.split("")));
+  const grid = new Grid<string>(input.lines().map((line) => line.chars()));
 
   const blizzards = grid.positions
     .filter((pos) => pos.value !== "." && pos.value !== "#")

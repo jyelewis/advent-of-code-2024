@@ -14,7 +14,7 @@ enum Direction {
 }
 
 export function day06_fast(input: string) {
-  const grid = input.split("\n").map((line) => line.split(""));
+  const grid = input.lines().map((line) => line.chars());
   const startingPosition: Position = range2D(grid).find((pos) => grid[pos.y][pos.x] === "^")!;
 
   const visitedPositions = evaluateGrid(startingPosition, grid)!;

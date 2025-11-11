@@ -1,7 +1,7 @@
 import { Direction, Grid, GridPosition, range } from "../utilities";
 
 export function day04a(input: string) {
-  const grid = new Grid(input.split("\n").map((line) => line.split("")));
+  const grid = Grid.fromString(input);
 
   return grid.positions // count & sum how many XMAS paths originate from each cell
     .map((pos) =>
@@ -16,7 +16,7 @@ export function day04a(input: string) {
 }
 
 export function day04b(input: string) {
-  const grid = new Grid(input.split("\n").map((line) => line.split("")));
+  const grid = Grid.fromString(input);
 
   // count how many cells are the center of a MAS-X
   return grid.positions.count((pos) => {

@@ -2,9 +2,9 @@ import { Position, Direction, Grid, GridPosition } from "../utilities";
 
 export function day10(input: string) {
   const grid = new Grid(
-    input.split("\n").map((line) =>
+    input.lines().map((line) =>
       // split each line into an array of numbers
-      line.split("").map((n) => parseInt(n, 10)),
+      line.chars().map((n) => parseInt(n, 10)),
     ),
   );
 
