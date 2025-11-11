@@ -16,43 +16,7 @@ export function day18a(input: string, isExample: boolean = false) {
   const startPos = memorySpace.itemAt(new Position(0, 0));
   const endPos = memorySpace.itemAt(new Position(gridSize - 1, gridSize - 1));
 
-  let currentPositions = [
-    {
-      pos: startPos,
-      stepsTaken: 0,
-    },
-  ];
-  while (true) {
-    let newPositions: typeof currentPositions = [];
-    for (const { pos, stepsTaken } of currentPositions) {
-      if (pos.equals(endPos)) {
-        return stepsTaken; // reached the end
-      }
-
-      // explore neighbors
-      newPositions.push(
-        ...Direction.CARDINAL
-          // try to move in that direction
-          .mapNotNull((dir) => pos.moveOrNull(dir))
-          // filter down to valid paths
-          .filter((pos) => pos.value !== "#")
-          // store as a new step position
-          .map((pos) => ({
-            pos,
-            stepsTaken: stepsTaken + 1,
-          })),
-      );
-    }
-
-    // trick: uniq will preference first items seen, so sorting by stepsTaken first means we keep the shortest paths
-    currentPositions = newPositions
-      // TODO: this isn't even needed!
-      //       why... isn't this needed? We walk in lock step - nothing prevents us from doubling back on ourselves though, foolishly, add that optimisation
-      // keep only the shortest paths to each position
-      // .toSorted((a, b) => a.stepsTaken - b.stepsTaken)
-      // remove duplicate (longer) positions
-      .unique(({ pos }) => pos.key);
-  }
+  return pathfind(startPos, endPos);
 }
 
 export function day18b(input: string, isExample: boolean = false) {
@@ -60,30 +24,42 @@ export function day18b(input: string, isExample: boolean = false) {
 
   // create an empty grid of appropriate size
   const gridSize = isExample ? 7 : 71;
-  const memorySpace = Grid.fromSize(gridSize, gridSize, ".");
 
   // pathfind from top-left to bottom-right
-  const startPos = memorySpace.itemAt(new Position(0, 0));
-  const endPos = memorySpace.itemAt(new Position(gridSize - 1, gridSize - 1));
+  const startPos = new Position(0, 0);
+  const endPos = new Position(gridSize - 1, gridSize - 1);
 
-  for (const fallingByte of fallingBytes) {
-    memorySpace.setValue(fallingByte, "#");
+  let low = 0;
+  let high = fallingBytes.length - 1;
 
-    const shortestPathToExit = pathfind(startPos, endPos);
+  while (true) {
+    const mid = Math.floor((low + high) / 2);
+
+    // populate the grid to this point
+    let memorySpace = Grid.fromSize(gridSize, gridSize, ".");
+    const fallenBytes = fallingBytes.slice(0, mid + 1);
+    fallenBytes.forEach((byte) => memorySpace.setValue(byte, "#"));
+
+    const shortestPathToExit = pathfind(memorySpace.itemAt(startPos), memorySpace.itemAt(endPos));
     if (shortestPathToExit === null) {
-      return `${fallingByte.x},${fallingByte.y}`;
+      high = mid; // already blocked, try earlier
+    } else {
+      low = mid + 1; // not yet blocked, try later
+    }
+
+    if (low >= high) {
+      const blockingByte = fallingBytes[high];
+      return `${blockingByte.x},${blockingByte.y}`;
     }
   }
 }
 
-// TODO: could this be a generic function?
 function pathfind(startPos: GridPosition<string>, endPos: GridPosition<string>): number | null {
   let seenPositions = new Set<string>();
   let currentPositions = [
     {
       pos: startPos,
       stepsTaken: 0,
-      // TODO: this could be a loop state instead
       novel: true,
     },
   ];
@@ -100,7 +76,7 @@ function pathfind(startPos: GridPosition<string>, endPos: GridPosition<string>):
         ...Direction.CARDINAL
           // try to move in that direction
           .mapNotNull((dir) => pos.moveOrNull(dir))
-          // filter down to valid paths, which we have not seen yet this tick
+          // filter down to valid paths, which we have not seen before
           .filter((pos) => pos.value !== "#" && !seenPositions.has(pos.key))
           // store as a new step position
           .map((pos) => ({
@@ -112,15 +88,10 @@ function pathfind(startPos: GridPosition<string>, endPos: GridPosition<string>):
     }
 
     if (newPositions.every(({ novel }) => !novel)) {
-      // no novel positions found this tick, we are blocked
+      // no novel positions found this tick, we must be blocked, no path to exit
       return null;
     }
 
-    // trick: uniq will preference first items seen, so sorting by stepsTaken first means we keep the shortest paths
-    currentPositions = newPositions
-      // keep only the shortest paths to each position
-      .toSorted((a, b) => a.stepsTaken - b.stepsTaken)
-      // remove duplicate (longer) positions
-      .unique(({ pos }) => pos.key);
+    currentPositions = newPositions.unique(({ pos }) => pos.key);
   }
 }
