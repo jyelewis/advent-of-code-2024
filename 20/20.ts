@@ -2,84 +2,24 @@ import { Grid, range } from "../utilities";
 import assert from "node:assert";
 
 export function day20a(input: string) {
-  const grid = Grid.fromString(input);
-
-  const startPosition = grid.positions.find(({ value }) => value === "S")!;
-  assert(startPosition !== undefined, "No starting position 'S' found");
-  const endPosition = grid.positions.find(({ value }) => value === "E")!;
-  assert(endPosition !== undefined, "No end position 'E' found");
-
-  // create a new grid, representing the distances taken from the start for each position
-  const distancesGrid = Grid.fromSize<null | number>(grid.width, grid.height, null);
-
-  // TODO: do this at right point
-  distancesGrid.setValue(startPosition, 0);
-
-  let stepNumber = 0;
-  let prevPosition = startPosition;
-  let currentPosition = startPosition;
-  while (true) {
-    const nextPosition = currentPosition
-      .adjacents()
-      // narrow down to exactly one valid next position
-      .find((pos) => pos.value !== "#" && !pos.equals(prevPosition));
-    assert(nextPosition !== undefined, "No valid next position found");
-
-    prevPosition = currentPosition;
-    currentPosition = nextPosition;
-
-    // store our distance from start
-    stepNumber++;
-    distancesGrid.setValue(currentPosition, stepNumber);
-
-    if (currentPosition.equals(endPosition)) {
-      // we're done
-      break;
-    }
-  }
-
-  const allCheats: any[] = [];
-
-  distancesGrid.positions
-    .filter(({ value }) => value !== null)
-    .map((cheatFromPosition) => {
-      const cheatToPositions = cheatFromPosition
-        .adjacents()
-        .flatMap((pos1) => pos1.adjacents())
-        .unique();
-
-      const cheats = cheatToPositions.map((cheatOutput) => {
-        const timeAtStart = cheatFromPosition.value!;
-        const timeAtEnd = timeAtStart + 2;
-
-        const timeSaved = distancesGrid.valueAt(cheatOutput)! - timeAtEnd;
-        return {
-          cheatFrom: cheatFromPosition,
-          cheatTo: cheatOutput,
-          timeSaved,
-        };
-      });
-
-      allCheats.push(...cheats);
-    });
-
-  const cheatsOver100 = allCheats.filter((c) => c.timeSaved >= 100);
-  return cheatsOver100.length;
+  const distancesGrid = computeDistancesGrid(input);
+  return findCheats(distancesGrid, 2);
 }
 
 export function day20b(input: string) {
-  const grid = Grid.fromString(input);
+  const distancesGrid = computeDistancesGrid(input);
+  return findCheats(distancesGrid, 20);
+}
 
+export function computeDistancesGrid(input: string): Grid<null | number> {
+  // parse input grid
+  const grid = Grid.fromString(input);
   const startPosition = grid.positions.find(({ value }) => value === "S")!;
-  assert(startPosition !== undefined, "No starting position 'S' found");
   const endPosition = grid.positions.find(({ value }) => value === "E")!;
-  assert(endPosition !== undefined, "No end position 'E' found");
 
   // create a new grid, representing the distances taken from the start for each position
   const distancesGrid = Grid.fromSize<null | number>(grid.width, grid.height, null);
-
-  // TODO: do this at right point
-  distancesGrid.setValue(startPosition, 0);
+  distancesGrid.setValue(startPosition, 0); // ensure our start position is recorded
 
   let stepNumber = 0;
   let prevPosition = startPosition;
@@ -104,14 +44,18 @@ export function day20b(input: string) {
     }
   }
 
-  const foundCheats = new Map<string, number>(); // key: "fromKey->toKey", value: timeSaved
+  return distancesGrid;
+}
 
+function findCheats(distancesGrid: Grid<null | number>, maxTimeCheating: number): number {
+  // for each position, see if disabling cheats from this spot results in any good cheat options
+  const cheatsOver100 = new Set<string>();
   distancesGrid.positions
     .filter(({ value }) => value !== null)
     .map((cheatFromPosition) => {
       let prevPositions = [cheatFromPosition];
 
-      range(1, 20).forEach((cheatSeconds) => {
+      range(1, maxTimeCheating).forEach((cheatTime) => {
         const newPositions = prevPositions.flatMap((pos) => pos.adjacents()).unique();
 
         prevPositions = newPositions;
@@ -119,27 +63,20 @@ export function day20b(input: string) {
         newPositions
           // remove walls (we can't finish on a wall)
           .filter((pos) => pos.value !== null)
-          .forEach((cheatOutput) => {
+          .forEach((cheatToPosition) => {
             const timeAtStart = cheatFromPosition.value!;
-            const timeAtEnd = timeAtStart + cheatSeconds;
+            const timeAtEnd = timeAtStart + cheatTime;
 
-            assert(cheatOutput.value !== null, "Cheat output has no time value");
-            const timeSaved = cheatOutput.value - timeAtEnd;
-            if (timeSaved < 0) {
-              // pretty bad cheat
-              return;
-            }
+            assert(cheatToPosition.value !== null, "Cheat output has no time value");
+            const timeSaved = cheatToPosition.value - timeAtEnd;
 
-            const key = `${cheatFromPosition.key}->${cheatOutput.key}`;
-            const existingValue = foundCheats.get(key);
-            if (existingValue === undefined || timeSaved > existingValue) {
-              // only update if we find a better timeSaved
-              foundCheats.set(key, timeSaved);
+            if (timeSaved >= 100) {
+              const key = `${cheatFromPosition.key}->${cheatToPosition.key}`;
+              cheatsOver100.add(key);
             }
           });
       });
     });
 
-  const vals = Array.from(foundCheats.values());
-  return vals.filter((x) => x >= 100).length;
+  return cheatsOver100.size;
 }

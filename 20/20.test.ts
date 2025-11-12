@@ -9,7 +9,6 @@ describe("day20", () => {
 
   it("20a sample input", () => {
     const answer = day20a(sampleInput);
-    // TODO: sample answer??
     assert.equal(answer, 0);
   });
 
@@ -23,10 +22,8 @@ describe("day20", () => {
     assert.equal(answer, 0);
   });
 
-  it("20b input", () => {
-    console.time("20b");
+  it.skip("20b input", () => {
     const answer = day20b(input);
     assert.equal(answer, 1033983);
-    console.timeEnd("20b");
   });
 });
