@@ -16,3 +16,6 @@ export { sscanf } from "./sscanf";
 export { Position } from "./Position";
 export { Direction } from "./Direction";
 export { GridPosition, Grid } from "./Grid";
+
+// trialing
+export { memo } from "./memo";

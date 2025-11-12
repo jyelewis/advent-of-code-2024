@@ -44,6 +44,11 @@ export class GridPosition<PosValue> extends Position {
     return new Position(this.x, this.y);
   }
 
+  // TODO: update existing challenges to use this method
+  adjacents(directions: Direction[] = Direction.CARDINAL): GridPosition<PosValue>[] {
+    return directions.mapNotNull((dir) => this.moveOrNull(dir));
+  }
+
   // direction step utils
   leftOrNull() {
     return this.moveOrNull(Direction.LEFT);
